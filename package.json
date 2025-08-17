@@ -1,0 +1,55 @@
+{
+  "name": "grim-wrapper",
+  "description": "Rewrap comment blocks to make them readable",
+  "version": "1.0.0",
+  "sideEffects": false,
+  "scripts": {
+    "pretest": "npm run lint",
+    "test": "npm run test:vitest",
+    "posttest": "npm run format",
+    "lint": "eslint . --cache --fix",
+    "test:vitest": "vitest run",
+    "test:watch": "vitest",
+    "build": "tsc",
+    "format": "prettier --write \"**/*.{js,mjc,cjs,ts,tsx,json,jsonc,md}\"",
+    "prepublish": "npm run build",
+    "prepare": "husky"
+  },
+  "homepage": "https://sapegin.github.io/grim-wrapper/",
+  "author": {
+    "name": "Artem Sapegin",
+    "url": "https://sapegin.me/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sapegin/grim-wrapper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sapegin/grim-wrapper/issues"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": "./out/index.js",
+  "types": "./out/index.d.ts",
+  "files": [
+    "out"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.39.1",
+    "@typescript-eslint/parser": "^8.39.1",
+    "eslint": "^9.33.0",
+    "eslint-config-tamia": "^9.2.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.5",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9",
+    "vitest": "^3.2.4"
+  },
+  "lint-staged": {
+    "*.{js,mjc,cjs,ts,tsx}": "eslint --cache --fix",
+    "*.{js,mjc,cjs,ts,tsx,json,jsonc,md}": "prettier --write"
+  }
+}

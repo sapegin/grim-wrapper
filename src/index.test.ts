@@ -5,7 +5,7 @@ import {
   normalizeCommentPrefix,
   stripFormatting,
   wrapComment,
-} from '.';
+} from './index.js';
 
 describe('getCommentPrefix', () => {
   test.each([

@@ -1,3 +1,6 @@
+// TODO: Markdown lists
+// TODO: JSDoc tags
+
 // Comment prefixes: //, #, *, /**, /*, {/*
 const prefixRegExp = /^\s*(?:\/\/|#|\*|\/\*\*|\/\*|\{\/\*)\s*/i;
 
@@ -42,7 +45,7 @@ export function getCommentSuffix(text: string) {
  * `/**` → ` *`
  */
 export function normalizeCommentPrefix(prefix: string) {
-  return prefix.replace(/\/\*+/, ' *');
+  return prefix.replace(/\{?\/\*+/, ' *');
 }
 
 /**

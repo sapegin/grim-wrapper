@@ -48,9 +48,73 @@ describe('stripFormatting', () => {
       'No buy year wolf chambray kale chips.',
     ],
     [
+      '//No buy year wolf chambray kale chips.',
+      'No buy year wolf chambray kale chips.',
+    ],
+    [
       `  // Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
   // asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
-      'Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.',
+      `Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
+    ],
+    [
+      '/* No buy year wolf chambray kale chips. */',
+      'No buy year wolf chambray kale chips.',
+    ],
+    [
+      '  /* No buy year wolf chambray kale chips. */',
+      'No buy year wolf chambray kale chips.',
+    ],
+    [
+      '/*No buy year wolf chambray kale chips.*/',
+      'No buy year wolf chambray kale chips.',
+    ],
+    [
+      `/*
+ * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+ * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
+ * kitsch.
+ */`,
+      `Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
+    ],
+    [
+      '/** No buy year wolf chambray kale chips. */',
+      'No buy year wolf chambray kale chips.',
+    ],
+    [
+      '  /** No buy year wolf chambray kale chips. */',
+      'No buy year wolf chambray kale chips.',
+    ],
+    [
+      '/**No buy year wolf chambray kale chips.*/',
+      'No buy year wolf chambray kale chips.',
+    ],
+    [
+      `/**
+ * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+ * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
+ * kitsch.
+ */`,
+      `Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
+    ],
+    [
+      '{/* No buy year wolf chambray kale chips. */}',
+      'No buy year wolf chambray kale chips.',
+    ],
+    [
+      '  {/* No buy year wolf chambray kale chips. */}',
+      'No buy year wolf chambray kale chips.',
+    ],
+    [
+      '{/*No buy year wolf chambray kale chips.*/}',
+      'No buy year wolf chambray kale chips.',
+    ],
+    [
+      `{/*
+ * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+ * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
+ * kitsch.
+ */}`,
+      `Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
     ],
   ])('returns normalized prefix: %s', (input, expected) => {
     const result = stripFormatting(input);
@@ -81,6 +145,15 @@ describe('wrapComment', () => {
       `// Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
 // asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
 // kitsch.`,
+    ],
+    [
+      // Wraps basic /* ... */ comment
+      '/* Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch. */',
+      `/*
+ * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+ * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
+ * kitsch.
+ */`,
     ],
   ])('wraps comment: %s', (input, expected) => {
     const result = wrapComment(input);

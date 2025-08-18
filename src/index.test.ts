@@ -78,6 +78,12 @@ describe('stripFormatting', () => {
       `Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
     ],
     [
+      `* Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+ * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
+ * kitsch.`,
+      `Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
+    ],
+    [
       '/** No buy year wolf chambray kale chips. */',
       'No buy year wolf chambray kale chips.',
     ],
@@ -166,6 +172,13 @@ wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
  * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
  * kitsch.
  */`,
+    ],
+    [
+      // Wraps a paragraph inside a /* ... */ comment
+      `  * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
+      `  * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+  * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
+  * kitsch.`,
     ],
     [
       // Wraps basic /** ... */ comment

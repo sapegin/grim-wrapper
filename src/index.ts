@@ -1,5 +1,6 @@
 // TODO: Markdown lists
 // TODO: JSDoc tags
+// TODO: HTML comments: <!-- -->
 
 // Comment prefixes: //, #, *, /**, /*, {/*
 const prefixRegExp = /^\s*(?:\/\/|#|\*|\/\*\*|\/\*|\{\/\*)\s*/i;

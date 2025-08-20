@@ -3,6 +3,8 @@ import {
   getAvailableLength,
   getCommentPrefix,
   normalizeCommentPrefix,
+  splitIntoChunks,
+  splitIntoLines,
   stripFormatting,
   wrapComment,
 } from './index.js';
@@ -136,6 +138,61 @@ describe('getAvailableLength', () => {
   ])('returns available length: %s', (prefix, maxLength, expected) => {
     const result = getAvailableLength(prefix, maxLength);
     expect(result).toBe(expected);
+  });
+});
+
+describe('splitIntoLines', () => {
+  test.each([
+    ['Tacos al pastor', ['Tacos al pastor']],
+    ['- Eins\n- Zwei\n- Polizei', ['- Eins', '- Zwei', '- Polizei']],
+    [
+      'Tacos al pastor\nTacos de kolbasa\n\nTacos de something else',
+      ['Tacos al pastor', 'Tacos de kolbasa', 'Tacos de something else'],
+    ],
+  ])('returns an array of chunks: %s', (text, expected) => {
+    const result = splitIntoLines(text);
+    expect(result).toEqual(expected);
+  });
+});
+
+describe('splitIntoChunks', () => {
+  test.each([
+    [
+      'No buy year wolf chambray kale chips.',
+      ['No buy year wolf chambray kale chips.'],
+    ],
+    [
+      'No buy year wolf\nchambray kale\nchips.',
+      ['No buy year wolf\nchambray kale\nchips.'],
+    ],
+    [
+      'No buy year wolf chambray kale chips.\n- Eins\n- Zwei\n- Polizei',
+      [
+        'No buy year wolf chambray kale chips.',
+        '- Eins',
+        '- Zwei',
+        '- Polizei',
+      ],
+    ],
+    ['- Eins,\n  zwei, polizei', ['- Eins,\n  zwei, polizei']],
+    ['- Eins,\nzwei, polizei', ['- Eins,\nzwei, polizei']],
+    [
+      'No buy year wolf chambray kale chips.\n@param foo Something\n@param bar Something else',
+      [
+        'No buy year wolf chambray kale chips.',
+        '@param foo Something',
+        '@param bar Something else',
+      ],
+    ],
+    ['- Eins\n* Zwei', ['- Eins', '* Zwei']],
+    ['-Eins\n*Zwei', ['-Eins', '*Zwei']],
+    [
+      '- [ ] Polizei\n- [x] Polizei\n* [ ] Polizei\n* [x] Polizei',
+      ['- [ ] Polizei', '- [x] Polizei', '* [ ] Polizei', '* [x] Polizei'],
+    ],
+  ])('returns an array of chunks: %s', (text, expected) => {
+    const result = splitIntoChunks(text);
+    expect(result).toEqual(expected);
   });
 });
 

@@ -14,6 +14,12 @@ const singleLinePrefixes = ['/**', '/*', '{/*'];
 // Suffixes that require their own line in multi-line comments: /**, /*, {/*
 const singleLineSuffixes = ['*/', '*/}'];
 
+// List item markers: -, *, - [ ], - [x], etc.
+const listItemRegExp = /^\s*([-*])(\s+\[[ x]\])?\s*/i;
+
+// JSDoc tag: @param, @returns
+const jsDocRegExp = /^\s*@\w+/;
+
 /**
  * Returns first line comment prefix.
  *
@@ -54,8 +60,7 @@ export function normalizeCommentPrefix(prefix: string) {
  * removes line breaks. Multiple paragraphs are treated as a single paragraph.
  */
 export function stripFormatting(text: string) {
-  // TODO: Support other types of line breaks
-  const lines = text.split(/\n+/);
+  const lines = splitIntoLines(text);
 
   const cleanLines = lines
     // Remove suffixes (*/)
@@ -76,6 +81,47 @@ export function stripFormatting(text: string) {
  */
 export function getAvailableLength(prefix: string, maxLength: number) {
   return maxLength - prefix.length;
+}
+
+/**
+ * Splits the text into an array of lines. Ignores empty lines.
+ */
+export function splitIntoLines(text: string) {
+  return text.split(/(?:\r?\n)+/);
+}
+
+/**
+ * Splits the text into chunks. A chunk could be:
+ * - a block of text
+ * - a list item (starts with `-` or `*`)
+ * - a checklist item (starts with `- [ ]` or `* [ ]` or `- [x]` or `* [x]` )
+ * - a JSDoc item (starts with @tagname)
+ *
+ * We assume that text blocks could only be placed before list items or JSDocs
+ * tags.
+ */
+export function splitIntoChunks(text: string): string[] {
+  const lines = splitIntoLines(text);
+  const chunks: string[][] = [];
+  let currentChunk: string[] = [];
+
+  for (const line of lines) {
+    // A list item marker or JSDoc tag starts a new chunk
+    if (
+      (listItemRegExp.test(line) || jsDocRegExp.test(line)) &&
+      currentChunk.length > 0
+    ) {
+      chunks.push(currentChunk);
+      currentChunk = [];
+    }
+    currentChunk.push(line);
+  }
+
+  if (currentChunk.length > 0) {
+    chunks.push(currentChunk);
+  }
+
+  return chunks.map((chunk) => chunk.join('\n'));
 }
 
 // TODO: Wrap comment paragraph?

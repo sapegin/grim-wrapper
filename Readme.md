@@ -6,6 +6,14 @@ Rewrap comment blocks to make them readable.
 
 [![Washing your code. A book on clean code for frontend developers](https://sapegin.me/images/washing-code-github.jpg)](https://sapegin.me/book/)
 
+## Features
+
+- Very small, no dependencies.
+- Works in most popular programming languages, Markdown, and plain text.
+- Supports Markdown lists and JavaDoc/JSDoc/XMLDoc tags.
+- Limited scope to a single paragraph (part of a comment separated by empty lines).
+- Almost zero config: the only option is maximum line length.
+
 ## Getting started
 
 1. Install Grim Wrapper from npm:

@@ -1,26 +1,88 @@
 // TODO: HTML comments: <!-- -->
+// TODO: Test with @example tag
+
+/**
+ * Escapes special characters in a string to be used safely in a regular expression.
+ */
+export function escapeRegExp(string: string): string {
+  return string.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+}
+
+/**
+ * Transforms an array of strings to a regular expression choices.
+ */
+export function regExpChoices(choices: string[]): string {
+  return choices.map((x) => escapeRegExp(x)).join('|');
+}
 
 // JSDoc tags are indented to a fixed size:
 // https://google.github.io/styleguide/jsguide.html#jsdoc-line-wrapping
 const JSDOC_INDENT = 4;
 
 // Comment prefixes: //, #, *, /**, /*, {/*
-const prefixRegExp = /^\s*(?:\/\/|#|\*|\/\*\*|\/\*|\{\/\*)\s*/i;
+const prefixRegExp = /^\s*(?:\/\/|#|\*|\/\*\*|\/\*|\{\/\*)\s*/;
 
 // Comment suffixes: */, */}
-const suffixRegExp = /\s*(?:\*\/|\*\/\})\s*$/i;
+const suffixRegExp = /\s*(?:\*\/|\*\/\})\s*$/;
 
-// Prefixes that require their own line in multi-line comments: /**, /*, {/*
-const singleLinePrefixes = ['/**', '/*', '{/*'];
+// Prefixes that start multiline comments: /**, /*, {/*
+const multilinePrefixes = ['/**', '/*', '{/*'];
+const multilinePrefixRegExp = new RegExp(
+  `^\\s*(?:${regExpChoices(multilinePrefixes)})\\s*`
+);
 
-// Suffixes that require their own line in multi-line comments: /**, /*, {/*
-const singleLineSuffixes = ['*/', '*/}'];
+// Suffixes that end multiline comments: /**, /*, {/*
+const multilineSuffixes = ['*/', '*/}'];
+const multilineSuffixRegExp = new RegExp(
+  `\\s*(?:${regExpChoices(multilineSuffixes)})\\s*$`
+);
+
+// Prefixes of lines inside a multiline comment: /**, /*, {/*
+const multilineInsidePrefixes = ['*', '//', '#'];
 
 // List item markers: -, *, - [ ], - [x], etc.
-const listItemRegExp = /^\s*([-*])(\s+\[[ x]\])?\s*/i;
+const listItemRegExp = /^\s*([-*])(\s+\[[ xX]\])?\s*/;
 
 // JSDoc tag: @param, @returns
 const jsDocRegExp = /^\s*@\w+\s*/;
+
+/**
+ * Checks whether a given line is the beginning of a multiline comment.
+ *
+ * Examples:
+ * `/* foo` → true
+ * ` * foo` → false
+ * `// foo` → false
+ */
+export function isCommentStart(text: string) {
+  return multilinePrefixRegExp.test(text);
+}
+
+/**
+ * Checks whether a given line is the end of a multiline comment.
+ *
+ * Examples:
+ * `foo *_/` → true (ignore _)
+ * ` * foo` → false
+ * `// foo` → false
+ */
+export function isCommentEnd(text: string) {
+  return multilineSuffixRegExp.test(text);
+}
+/**
+ * Checks whether a given line is a paragraph break in a multiline comment.
+ *
+ * Examples:
+ * `/* foo` → false
+ * `foo *_/` → false (ignore _)
+ * ` * foo` → false
+ * `// foo` → false
+ * ` *` → true
+ * `//` → true
+ */
+export function isCommentBreak(text: string) {
+  return multilineInsidePrefixes.includes(text.trim());
+}
 
 /**
  * Returns first line comment prefix.
@@ -208,14 +270,14 @@ export function wrapComment(comment: string, maxLength = 80) {
 
   // Restore opening /*, /**, etc.
   const cleanFirstLinePrefix = firstLinePrefix.trim();
-  if (singleLinePrefixes.includes(cleanFirstLinePrefix)) {
+  if (multilinePrefixes.includes(cleanFirstLinePrefix)) {
     prefixedLines.unshift(firstLinePrefix.trimEnd());
   }
 
   // Restore closing */, etc.
   const lastLineSuffix = getCommentSuffix(comment);
   const cleanLastLineSuffix = lastLineSuffix.trim();
-  if (singleLineSuffixes.includes(cleanLastLineSuffix)) {
+  if (multilineSuffixes.includes(cleanLastLineSuffix)) {
     const indentedLastLineSuffix = normalizedPrefix
       .replace(normalizedPrefix.trim(), cleanLastLineSuffix)
       .trimEnd();

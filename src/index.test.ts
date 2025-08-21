@@ -2,6 +2,9 @@ import { test, expect, describe } from 'vitest';
 import {
   getAvailableLength,
   getCommentPrefix,
+  isCommentBreak,
+  isCommentEnd,
+  isCommentStart,
   isListItemOrJsDocTag,
   normalizeCommentPrefix,
   splitIntoChunks,
@@ -9,6 +12,57 @@ import {
   stripFormatting,
   wrapComment,
 } from './index.js';
+
+describe('isCommentStart', () => {
+  test.each([
+    ['// No buy year wolf chambray kale chips.', false],
+    ['  // No buy year wolf chambray kale chips.', false],
+    ['\t// No buy year wolf chambray kale chips.', false],
+    ['  /* No buy year wolf chambray kale chips. */', true],
+    ['  /** No buy year wolf chambray kale chips. */', true],
+    ['  {/* No buy year wolf chambray kale chips. */}', true],
+    ['  # No buy year wolf chambray kale chips.', false],
+    ['No buy year wolf chambray kale chips.', false],
+  ])('returns prefix: %s', (input, expected) => {
+    const result = isCommentStart(input);
+    expect(result).toBe(expected);
+  });
+});
+
+describe('isCommentEnd', () => {
+  test.each([
+    ['// No buy year wolf chambray kale chips.', false],
+    ['  // No buy year wolf chambray kale chips.', false],
+    ['\t// No buy year wolf chambray kale chips.', false],
+    ['  /* No buy year wolf chambray kale chips. */', true],
+    ['  /** No buy year wolf chambray kale chips. */', true],
+    ['  {/* No buy year wolf chambray kale chips. */}', true],
+    ['  # No buy year wolf chambray kale chips.', false],
+    ['No buy year wolf chambray kale chips.', false],
+  ])('returns prefix: %s', (input, expected) => {
+    const result = isCommentEnd(input);
+    expect(result).toBe(expected);
+  });
+});
+
+describe('isCommentBreak', () => {
+  test.each([
+    ['// No buy year wolf chambray kale chips.', false],
+    ['  // No buy year wolf chambray kale chips.', false],
+    ['\t// No buy year wolf chambray kale chips.', false],
+    ['  /* No buy year wolf chambray kale chips. */', false],
+    ['  /** No buy year wolf chambray kale chips. */', false],
+    ['  {/* No buy year wolf chambray kale chips. */}', false],
+    ['  # No buy year wolf chambray kale chips.', false],
+    ['No buy year wolf chambray kale chips.', false],
+    ['  #', true],
+    ['  //', true],
+    ['  *', true],
+  ])('returns prefix: %s', (input, expected) => {
+    const result = isCommentBreak(input);
+    expect(result).toBe(expected);
+  });
+});
 
 describe('getCommentPrefix', () => {
   test.each([

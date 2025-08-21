@@ -2,6 +2,7 @@ import { test, expect, describe } from 'vitest';
 import {
   getAvailableLength,
   getCommentPrefix,
+  isListItemOrJsDocTag,
   normalizeCommentPrefix,
   splitIntoChunks,
   splitIntoLines,
@@ -44,90 +45,109 @@ describe('stripFormatting', () => {
   test.each([
     [
       '// No buy year wolf chambray kale chips.',
-      'No buy year wolf chambray kale chips.',
+      ['No buy year wolf chambray kale chips.'],
     ],
     [
       '  // No buy year wolf chambray kale chips.',
-      'No buy year wolf chambray kale chips.',
+      ['No buy year wolf chambray kale chips.'],
     ],
     [
       '//No buy year wolf chambray kale chips.',
-      'No buy year wolf chambray kale chips.',
+      ['No buy year wolf chambray kale chips.'],
     ],
     [
       `  // Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
-  // asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
-      `Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
+      // asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
+      [
+        `Bicycle rights disrupt craft beer butcher bagel biodiesel vintage`,
+        `asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
+      ],
     ],
     [
       '/* No buy year wolf chambray kale chips. */',
-      'No buy year wolf chambray kale chips.',
+      ['No buy year wolf chambray kale chips.'],
     ],
     [
       '  /* No buy year wolf chambray kale chips. */',
-      'No buy year wolf chambray kale chips.',
+      ['No buy year wolf chambray kale chips.'],
     ],
     [
       '/*No buy year wolf chambray kale chips.*/',
-      'No buy year wolf chambray kale chips.',
+      ['No buy year wolf chambray kale chips.'],
     ],
     [
       `/*
- * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
- * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
- * kitsch.
- */`,
-      `Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
+     * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+     * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
+     * kitsch.
+     */`,
+      [
+        'Bicycle rights disrupt craft beer butcher bagel biodiesel vintage',
+        'asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia',
+        'kitsch.',
+      ],
     ],
     [
       `* Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
- * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
- * kitsch.`,
-      `Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
+     * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
+     * kitsch.`,
+      [
+        'Bicycle rights disrupt craft beer butcher bagel biodiesel vintage',
+        'asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia',
+        'kitsch.',
+      ],
     ],
     [
       '/** No buy year wolf chambray kale chips. */',
-      'No buy year wolf chambray kale chips.',
+      ['No buy year wolf chambray kale chips.'],
     ],
     [
       '  /** No buy year wolf chambray kale chips. */',
-      'No buy year wolf chambray kale chips.',
+      ['No buy year wolf chambray kale chips.'],
     ],
     [
       '/**No buy year wolf chambray kale chips.*/',
-      'No buy year wolf chambray kale chips.',
+      ['No buy year wolf chambray kale chips.'],
     ],
     [
       `/**
- * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
- * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
- * kitsch.
- */`,
-      `Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
+     * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+     * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
+     * kitsch.
+     */`,
+      [
+        'Bicycle rights disrupt craft beer butcher bagel biodiesel vintage',
+        'asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia',
+        'kitsch.',
+      ],
     ],
     [
       '{/* No buy year wolf chambray kale chips. */}',
-      'No buy year wolf chambray kale chips.',
+      ['No buy year wolf chambray kale chips.'],
     ],
     [
       '  {/* No buy year wolf chambray kale chips. */}',
-      'No buy year wolf chambray kale chips.',
+      ['No buy year wolf chambray kale chips.'],
     ],
     [
       '{/*No buy year wolf chambray kale chips.*/}',
-      'No buy year wolf chambray kale chips.',
+      ['No buy year wolf chambray kale chips.'],
     ],
     [
       `{/*
- * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
- * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
- * kitsch.
- */}`,
-      `Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
+     * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+     * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
+     * kitsch.
+     */}`,
+      [
+        'Bicycle rights disrupt craft beer butcher bagel biodiesel vintage',
+        'asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia',
+        'kitsch.',
+      ],
     ],
   ])('returns normalized prefix: %s', (input, expected) => {
     const result = stripFormatting(input);
-    expect(result).toBe(expected);
+    expect(result).toEqual(expected);
   });
 });
 
@@ -155,18 +175,49 @@ describe('splitIntoLines', () => {
   });
 });
 
+describe('isListItemOrJsDocTag', () => {
+  test.each([
+    ['Tacos al pastor', false],
+    ['- Eins', true],
+    ['-Eins', true],
+    ['* Eins', true],
+    ['*Eins', true],
+    ['- [ ] Eins', true],
+    ['- [ ]Eins', true],
+    ['* [ ] Eins', true],
+    ['* [ ]Eins', true],
+    ['- [x] Eins', true],
+    ['- [x]Eins', true],
+    ['* [x] Eins', true],
+    ['* [x]Eins', true],
+    ['- [X] Eins', true],
+    ['- [X]Eins', true],
+    ['* [X] Eins', true],
+    ['* [X]Eins', true],
+    ['@param foo', true],
+  ])('returns true if list or JSDoc: %s', (text, expected) => {
+    const result = isListItemOrJsDocTag(text);
+    expect(result).toEqual(expected);
+  });
+});
+
 describe('splitIntoChunks', () => {
   test.each([
     [
-      'No buy year wolf chambray kale chips.',
+      ['No buy year wolf chambray kale chips.'],
       ['No buy year wolf chambray kale chips.'],
     ],
     [
-      'No buy year wolf\nchambray kale\nchips.',
+      ['No buy year wolf', 'chambray kale', 'chips.'],
       ['No buy year wolf\nchambray kale\nchips.'],
     ],
     [
-      'No buy year wolf chambray kale chips.\n- Eins\n- Zwei\n- Polizei',
+      [
+        'No buy year wolf chambray kale chips.',
+        '- Eins',
+        '- Zwei',
+        '- Polizei',
+      ],
       [
         'No buy year wolf chambray kale chips.',
         '- Eins',
@@ -174,24 +225,34 @@ describe('splitIntoChunks', () => {
         '- Polizei',
       ],
     ],
-    ['- Eins,\n  zwei, polizei', ['- Eins,\n  zwei, polizei']],
-    ['- Eins,\nzwei, polizei', ['- Eins,\nzwei, polizei']],
+    [['- Eins,', '  zwei, polizei'], ['- Eins,\n  zwei, polizei']],
+    [['- Eins,', 'zwei, polizei'], ['- Eins,\nzwei, polizei']],
     [
-      'No buy year wolf chambray kale chips.\n@param foo Something\n@param bar Something else',
+      [
+        'No buy year wolf chambray kale chips.',
+        '@param foo Something',
+        '@param bar Something else',
+      ],
       [
         'No buy year wolf chambray kale chips.',
         '@param foo Something',
         '@param bar Something else',
       ],
     ],
-    ['- Eins\n* Zwei', ['- Eins', '* Zwei']],
-    ['-Eins\n*Zwei', ['-Eins', '*Zwei']],
     [
-      '- [ ] Polizei\n- [x] Polizei\n* [ ] Polizei\n* [x] Polizei',
+      ['- Eins', '* Zwei'],
+      ['- Eins', '* Zwei'],
+    ],
+    [
+      ['-Eins', '*Zwei'],
+      ['-Eins', '*Zwei'],
+    ],
+    [
+      ['- [ ] Polizei', '- [x] Polizei', '* [ ] Polizei', '* [x] Polizei'],
       ['- [ ] Polizei', '- [x] Polizei', '* [ ] Polizei', '* [x] Polizei'],
     ],
-  ])('returns an array of chunks: %s', (text, expected) => {
-    const result = splitIntoChunks(text);
+  ])('returns an array of chunks: %s', (lines, expected) => {
+    const result = splitIntoChunks(lines);
     expect(result).toEqual(expected);
   });
 });
@@ -254,6 +315,26 @@ wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
  * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
  * kitsch.
  */}`,
+    ],
+    [
+      // Comments with multiple chunks: Markdown list
+      'No buy year wolf chambray kale chips.\n- Eins, zwei, polizei\n- Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.',
+      `No buy year wolf chambray kale chips.
+- Eins, zwei, polizei
+- Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical
+  wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
+    ],
+    [
+      // Comments with multiple chunks: JSDoc
+      '\t/** Bicycle rights disrupt craft beer\nbutcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.\n\t * @param foo Short one\n\t * @param bar Artisan messenger bag Helvetica TikTok whatever Mauerpark fanny pack meh jean shorts freegan direct trade  aesthetic sustainable small batch. */',
+      `\t/**
+\t * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+\t * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
+\t * kitsch.
+\t * @param foo Short one
+\t * @param bar Artisan messenger bag Helvetica TikTok whatever Mauerpark fanny pack
+\t *     meh jean shorts freegan direct trade aesthetic sustainable small batch.
+\t */`,
     ],
   ])('wraps comment: %s', (input, expected) => {
     const result = wrapComment(input);

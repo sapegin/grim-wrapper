@@ -21,7 +21,7 @@ const JSDOC_INDENT = 4;
 
 // TODO: Rewrite using new RegExp()
 // Comment prefixes: //, #, *, /**, /*, {/*
-const prefixRegExp = /^\s*(?:\/\/|#|\*|\/\*\*|\/\*|\{\/\*)\s*/;
+const prefixRegExp = /^\s*(?:\/\/|#|\*|\/\*\*|\/\*|\{\/\*)[ \t]*/;
 
 // TODO: Rewrite using new RegExp()
 // Comment suffixes: */, */}
@@ -112,13 +112,24 @@ export function getCommentSuffix(text: string) {
  * Returns a prefix that should be used to prefix each line of comments.
  *
  * Examples:
- * `//` → `//`
- * `#` → `#`
- * `/*` → ` *`
- * `/**` → ` *`
+ * `//` → `// `
+ * `#` → `# `
+ * `/*` → ` * `
+ * `/**` → ` * `
  */
 export function normalizeCommentPrefix(prefix: string) {
-  return prefix.replace(/\{?\/\*+/, ' *');
+  // If there's no prefix (for example in Markdown or plain text) do nothing
+  if (prefix === '') {
+    return '';
+  }
+
+  return (
+    prefix
+      // Replace the opening marker (/*, {/*) with a continuation marker (*)
+      .replace(/\{?\/\*+/, ' *')
+      // Ensure there's one space at the end
+      .replace(/\s*$/, ' ')
+  );
 }
 
 /**
@@ -256,7 +267,11 @@ export function wrapComment(comment: string, maxLength = 80) {
   const chunks = splitIntoChunks(stripFormatting(comment));
 
   const firstLinePrefix = getCommentPrefix(comment);
+  console.log('🍩 firstLinePrefix', `[${firstLinePrefix}]`);
+
   const normalizedPrefix = normalizeCommentPrefix(firstLinePrefix);
+  console.log('🍩 normalizedPrefix', `[${normalizedPrefix}]`);
+
   const availableMaxLength = getAvailableLength(normalizedPrefix, maxLength);
 
   const lines = [];

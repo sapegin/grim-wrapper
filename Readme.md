@@ -22,22 +22,28 @@ Rewrap comment blocks to make them readable.
 npm install grim-wrapper
 ```
 
-2.
+2. Call the `wrapComment` function with the comment text and the desired maximum line length. Note that it works with comment paragraphs (lines between “empty” lines).
 
 ```js
 import { wrapComment } from 'grim-wrapper';
 
-wrapComment('...');
-// → ...
+wrapComment(
+  '// Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.',
+  80
+);
+// →
+// Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+// asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
+// kitsch.
 ```
-
-## The Name
-
-...
 
 ## Motivation
 
-...
+I’ve been using [Rewrap](https://stkb.github.io/Rewrap/) for a long time, but it doesn’t always do what I want:
+
+- No support for JSX comments.
+- Often weird formatting of multiline comments (`/* ... */`, etc.).
+- I don’t like the way it format Markdown todos and JSDoc tags.
 
 ## Sponsoring
 

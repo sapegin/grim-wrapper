@@ -386,8 +386,9 @@ wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
 \t * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
 \t * kitsch.
 \t * @param foo Short one
-\t * @param bar Artisan messenger bag Helvetica TikTok whatever Mauerpark fanny pack
-\t *     meh jean shorts freegan direct trade aesthetic sustainable small batch.
+\t * @param bar Artisan messenger bag Helvetica TikTok whatever Mauerpark fanny
+\t *     pack meh jean shorts freegan direct trade aesthetic sustainable small
+\t *     batch.
 \t */`,
     ],
   ])('wraps comment: %s', (input, expected) => {

@@ -19,9 +19,11 @@ export function regExpChoices(choices: string[]): string {
 // https://google.github.io/styleguide/jsguide.html#jsdoc-line-wrapping
 const JSDOC_INDENT = 4;
 
+// TODO: Rewrite using new RegExp()
 // Comment prefixes: //, #, *, /**, /*, {/*
 const prefixRegExp = /^\s*(?:\/\/|#|\*|\/\*\*|\/\*|\{\/\*)\s*/;
 
+// TODO: Rewrite using new RegExp()
 // Comment suffixes: */, */}
 const suffixRegExp = /\s*(?:\*\/|\*\/\})\s*$/;
 
@@ -227,15 +229,15 @@ export function wrapListItem(chunk: string, maxLength: number) {
   const prefixLength = prefix.length;
   const indentLength = jsDocRegExp.test(chunk) ? JSDOC_INDENT : prefix.length;
 
-  // Wrap lines by available length minus indentation, pad the beginning of the first line with spaces to accommodate the difference between the size of indentation and the prefix
+  // Wrap lines by available length minus indentation, pad the beginning of the first line with @ character to accommodate the difference between the size of indentation and the prefix
   const cleanChunk =
-    ' '.repeat(prefixLength - indentLength) + chunk.replace(prefix, '');
+    '@'.repeat(prefixLength - indentLength) + chunk.replace(prefix, '');
   const lines = wrapTextBlock(cleanChunk, maxLength - indentLength);
 
   // Return the prefix and indent following lines
   const formattedLines = lines.map((line, index) =>
     index === 0
-      ? `${prefix}${line.trimStart()}`
+      ? `${prefix}${line.replaceAll(/^@+/g, '')}`
       : `${' '.repeat(indentLength)}${line}`
   );
 

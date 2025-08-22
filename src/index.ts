@@ -267,10 +267,7 @@ export function wrapComment(comment: string, maxLength = 80) {
   const chunks = splitIntoChunks(stripFormatting(comment));
 
   const firstLinePrefix = getCommentPrefix(comment);
-  console.log('🍩 firstLinePrefix', `[${firstLinePrefix}]`);
-
   const normalizedPrefix = normalizeCommentPrefix(firstLinePrefix);
-  console.log('🍩 normalizedPrefix', `[${normalizedPrefix}]`);
 
   const availableMaxLength = getAvailableLength(normalizedPrefix, maxLength);
 

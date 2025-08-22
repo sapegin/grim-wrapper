@@ -24,6 +24,7 @@ describe('isCommentStart', () => {
     ['  /** No buy year wolf chambray kale chips. */', true],
     ['  {/* No buy year wolf chambray kale chips. */}', true],
     ['  # No buy year wolf chambray kale chips.', false],
+    ['  <!-- No buy year wolf chambray kale chips.', true],
     ['No buy year wolf chambray kale chips.', false],
   ])('returns prefix: %s', (input, expected) => {
     const result = isCommentStart(input);
@@ -39,6 +40,7 @@ describe('isCommentEnd', () => {
     ['  /* No buy year wolf chambray kale chips. */', true],
     ['  /** No buy year wolf chambray kale chips. */', true],
     ['  {/* No buy year wolf chambray kale chips. */}', true],
+    ['  <!-- No buy year wolf chambray kale chips. -->', true],
     ['  # No buy year wolf chambray kale chips.', false],
     ['No buy year wolf chambray kale chips.', false],
   ])('returns prefix: %s', (input, expected) => {
@@ -79,6 +81,7 @@ describe('isComment', () => {
     ['  /** No buy year wolf chambray kale chips. */', true],
     ['  {/* No buy year wolf chambray kale chips. */}', true],
     ['  # No buy year wolf chambray kale chips.', true],
+    ['  <!-- No buy year wolf chambray kale chips. -->', true],
     ['  #', true],
     ['  //', true],
     ['  *', true],
@@ -97,6 +100,7 @@ describe('getCommentPrefix', () => {
     ['  /* No buy year wolf chambray kale chips. */', '  /* '],
     ['  /** No buy year wolf chambray kale chips. */', '  /** '],
     ['  # No buy year wolf chambray kale chips.', '  # '],
+    ['  <!-- No buy year wolf chambray kale chips. -->', '  <!-- '],
     ['No buy year wolf chambray kale chips.', ''],
     [
       `    /**
@@ -119,8 +123,11 @@ describe('normalizeCommentPrefix', () => {
     ['  /* ', '   * '],
     ['  /** ', '   * '],
     ['  {/* ', '   * '],
+    ['  <!-- ', '  '],
     ['  # ', '  # '],
     ['', ''],
+    ['  ', '  '],
+    ['\t', '\t'],
     ['    /**', '     * '],
   ])('returns normalized prefix: %s', (input, expected) => {
     const result = normalizeCommentPrefix(input);
@@ -160,6 +167,10 @@ describe('stripFormatting', () => {
     ],
     [
       '/*No buy year wolf chambray kale chips.*/',
+      ['No buy year wolf chambray kale chips.'],
+    ],
+    [
+      '<!-- No buy year wolf chambray kale chips. -->',
       ['No buy year wolf chambray kale chips.'],
     ],
     [
@@ -398,12 +409,12 @@ wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
     ],
     [
       // Wraps basic /** ... */ comment
-      '/** Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch. */',
-      `/**
- * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
- * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
- * kitsch.
- */`,
+      '\t/** Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch. */',
+      `\t/**
+\t * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+\t * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
+\t * kitsch.
+\t */`,
     ],
     [
       // Wraps basic {/* ... */} comment
@@ -413,6 +424,15 @@ wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
  * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
  * kitsch.
  */}`,
+    ],
+    [
+      // Wraps basic <!-- ... --> comment
+      '    <!-- Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch. -->',
+      `    <!--
+    Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+    asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
+    kitsch.
+    -->`,
     ],
     [
       // Comments with multiple chunks: Markdown list

@@ -1,4 +1,3 @@
-// TODO: HTML comments: <!-- -->
 // TODO: Test with @example tag
 // TODO: Test with words longer than max length (URL for example)
 // TODO: Support /* foo\nbar\baz */ /* foo\nbar\baz\n\nfoo\nbar\baz\n\nfoo\nbar\baz */
@@ -27,7 +26,7 @@ export function regExpChoices(choices: string[]): string {
 const JSDOC_INDENT = 4;
 
 // Prefixes that start multiline comments: /**, /*, {/*
-const multilinePrefixes = ['/**', '/*', '{/*'];
+const multilinePrefixes = ['/**', '/*', '{/*', '<!--'];
 
 // Prefixes of lines inside a multiline comment: /**, /*, {/*
 const multilineInsidePrefixes = ['*', '//', '#'];
@@ -35,7 +34,7 @@ const multilineInsidePrefixes = ['*', '//', '#'];
 const allPrefixes = [...multilinePrefixes, ...multilineInsidePrefixes];
 
 // Suffixes that end multiline comments: /**, /*, {/*
-const multilineSuffixes = ['*/', '*/}'];
+const multilineSuffixes = ['*/', '*/}', '-->'];
 
 // Comment prefixes: //, #, *, /**, /*, {/*
 const prefixRegExp = new RegExp(
@@ -48,9 +47,7 @@ const multilinePrefixRegExp = new RegExp(
 );
 
 // Comment suffix (can be only on multiline comments)
-const suffixRegExp = new RegExp(
-  `\\s*(?:${regExpChoices(multilineSuffixes)})\\s*$`
-);
+const suffixRegExp = new RegExp(`(?:${regExpChoices(multilineSuffixes)})\\s*$`);
 
 // List item markers: -, *, - [ ], - [x], etc.
 const listItemRegExp = /^\s*([-*])(\s+\[[ xX]\])?\s*/;
@@ -147,18 +144,26 @@ export function getCommentSuffix(text: string) {
  * - `/**` → ` * `
  */
 export function normalizeCommentPrefix(prefix: string) {
-  // If there's no prefix (for example in Markdown or plain text) do nothing
-  if (prefix === '') {
-    return '';
+  // If there's only whitespace (for example, in Markdown or plain text), return
+  // the prefix as is (we need to keep this whitespace for proper indentation)
+  if (prefix.trim() === '') {
+    return prefix;
   }
 
-  return (
-    prefix
-      // Replace the opening marker (/*, {/*) with a continuation marker (*)
-      .replace(/\{?\/\*+/, ' *')
-      // Ensure there's one space at the end
-      .replace(/\s*$/, ' ')
-  );
+  const normalizedPrefix = prefix
+    // Replace the opening marker (/*, {/*) with a continuation marker (*)
+    .replace(/\{?\/\*+/, ' *')
+    // Remove the opening marker (<!--)
+    .replace(/<!--[ \t]*/, '');
+
+  // If we end up with an empty string or whitespace (for example, in HTML),
+  // return an empty string
+  if (normalizedPrefix.trim() === '') {
+    return normalizedPrefix;
+  }
+
+  // Ensure there's one space at the end
+  return normalizedPrefix.replace(/\s*$/, ' ');
 }
 
 /**
@@ -314,20 +319,17 @@ export function wrapComment(comment: string, maxLength = 80) {
 
   const prefixedLines = lines.map((line) => `${normalizedPrefix}${line}`);
 
-  // Restore opening /*, /**, etc.
+  // Restore opening /*, /**, <!--, etc.
   const cleanFirstLinePrefix = firstLinePrefix.trim();
   if (multilinePrefixes.includes(cleanFirstLinePrefix)) {
     prefixedLines.unshift(firstLinePrefix.trimEnd());
   }
 
-  // Restore closing */, etc.
+  // Restore closing */, -->, etc.
   const lastLineSuffix = getCommentSuffix(comment);
-  const cleanLastLineSuffix = lastLineSuffix.trim();
-  if (multilineSuffixes.includes(cleanLastLineSuffix)) {
-    const indentedLastLineSuffix = normalizedPrefix
-      .replace(normalizedPrefix.trim(), cleanLastLineSuffix)
-      .trimEnd();
-    prefixedLines.push(indentedLastLineSuffix);
+  if (multilineSuffixes.includes(lastLineSuffix)) {
+    const indentation = normalizedPrefix.replace(/\*\s*$/, '');
+    prefixedLines.push(`${indentation}${lastLineSuffix}`);
   }
 
   return prefixedLines.join('\n');

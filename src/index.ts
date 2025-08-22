@@ -1,9 +1,15 @@
 // TODO: HTML comments: <!-- -->
 // TODO: Test with @example tag
+// TODO: Test with words longer than max length (URL for example)
 // TODO: Support /* foo\nbar\baz */ /* foo\nbar\baz\n\nfoo\nbar\baz\n\nfoo\nbar\baz */
+// TODO: Support nested lists
+// TODO: Support ordered lists
+// TODO: Maybe: Normalize list markers to `-` similar to Prettier
+// TODO: Treat `TODO:` and such markers as new paragraph (similar to @todo)
 
 /**
- * Escapes special characters in a string to be used safely in a regular expression.
+ * Escapes special characters in a string to be used safely in a regular
+ * expression.
  */
 export function escapeRegExp(string: string): string {
   return string.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
@@ -56,9 +62,9 @@ const jsDocRegExp = /^\s*@\w+\s*/;
  * Checks whether a given line is the beginning of a multiline comment.
  *
  * Examples:
- * `/* foo` → true
- * ` * foo` → false
- * `// foo` → false
+ * - `/* foo` → true
+ * - ` * foo` → false
+ * - `// foo` → false
  */
 export function isCommentStart(text: string) {
   return multilinePrefixRegExp.test(text);
@@ -80,12 +86,12 @@ export function isCommentEnd(text: string) {
  * Checks whether a given line is a paragraph break in a multiline comment.
  *
  * Examples:
- * `/* foo` → false
- * `foo *_/` → false (ignore _)
- * ` * foo` → false
- * `// foo` → false
- * ` *` → true
- * `//` → true
+ * - `/* foo` → false
+ * - `foo *_/` → false (ignore _)
+ * - ` * foo` → false
+ * - `// foo` → false
+ * - ` *` → true
+ * - `//` → true
  */
 export function isCommentBreak(text: string) {
   return multilineInsidePrefixes.includes(text.trim());
@@ -95,14 +101,14 @@ export function isCommentBreak(text: string) {
  * Checks whether a given line is a line inside a comment.
  *
  * Examples:
- * `/* foo` → true
- * `foo *_/` → true (ignore _)
- * ` * foo` → true
- * `// foo` → true
- * ` *` → true
- * `//` → true
- * `alert()` → false
- * `` → false
+ * - `/* foo` → true
+ * - `foo *_/` → true (ignore _)
+ * - ` * foo` → true
+ * - `// foo` → true
+ * - ` *` → true
+ * - `//` → true
+ * - `alert()` → false
+ * - `` → false
  */
 export function isComment(text: string) {
   return prefixRegExp.test(text);
@@ -111,7 +117,8 @@ export function isComment(text: string) {
 /**
  * Returns first line comment prefix.
  *
- * `  // Example` → `  //`
+ * Examples:
+ * - `  // Example` → `  //`
  */
 export function getCommentPrefix(text: string) {
   const match = text.match(prefixRegExp);
@@ -122,8 +129,8 @@ export function getCommentPrefix(text: string) {
  * Returns last line comment prefix.
  *
  * Examples:
- * `  // Example` → ``
- * `  /* Example *_/` → `*_/` (ignore _)
+ * - `  // Example` → ``
+ * - `  /* Example *_/` → `*_/` (ignore _)
  */
 export function getCommentSuffix(text: string) {
   const match = text.match(suffixRegExp);
@@ -134,10 +141,10 @@ export function getCommentSuffix(text: string) {
  * Returns a prefix that should be used to prefix each line of comments.
  *
  * Examples:
- * `//` → `// `
- * `#` → `# `
- * `/*` → ` * `
- * `/**` → ` * `
+ * - `//` → `// `
+ * - `#` → `# `
+ * - `/*` → ` * `
+ * - `/**` → ` * `
  */
 export function normalizeCommentPrefix(prefix: string) {
   // If there's no prefix (for example in Markdown or plain text) do nothing
@@ -156,7 +163,8 @@ export function normalizeCommentPrefix(prefix: string) {
 
 /**
  * Returns comment as an array of lines of text: strips all comment markers and
- * squashes multiple line breaks into one. Multiple paragraphs are treated as a single paragraph.
+ * squashes multiple line breaks into one. Multiple paragraphs are treated as a
+ * single paragraph.
  */
 export function stripFormatting(text: string) {
   const lines = splitIntoLines(text);
@@ -262,7 +270,9 @@ export function wrapListItem(chunk: string, maxLength: number) {
   const prefixLength = prefix.length;
   const indentLength = jsDocRegExp.test(chunk) ? JSDOC_INDENT : prefix.length;
 
-  // Wrap lines by available length minus indentation, pad the beginning of the first line with @ character to accommodate the difference between the size of indentation and the prefix
+  // Wrap lines by available length minus indentation, pad the beginning of the
+  // first line with @ character to accommodate the difference between the size
+  // of indentation and the prefix
   const cleanChunk =
     '@'.repeat(prefixLength - indentLength) + chunk.replace(prefix, '');
   const lines = wrapTextBlock(cleanChunk, maxLength - indentLength);

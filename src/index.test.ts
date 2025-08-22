@@ -1,3 +1,4 @@
+// cspell:disable
 import { test, expect, describe } from 'vitest';
 import {
   getAvailableLength,

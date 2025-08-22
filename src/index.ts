@@ -1,5 +1,6 @@
 // TODO: HTML comments: <!-- -->
 // TODO: Test with @example tag
+// TODO: Support /* foo\nbar\baz */ /* foo\nbar\baz\n\nfoo\nbar\baz\n\nfoo\nbar\baz */
 
 /**
  * Escapes special characters in a string to be used safely in a regular expression.
@@ -19,28 +20,31 @@ export function regExpChoices(choices: string[]): string {
 // https://google.github.io/styleguide/jsguide.html#jsdoc-line-wrapping
 const JSDOC_INDENT = 4;
 
-// TODO: Rewrite using new RegExp()
-// Comment prefixes: //, #, *, /**, /*, {/*
-const prefixRegExp = /^\s*(?:\/\/|#|\*|\/\*\*|\/\*|\{\/\*)[ \t]*/;
-
-// TODO: Rewrite using new RegExp()
-// Comment suffixes: */, */}
-const suffixRegExp = /\s*(?:\*\/|\*\/\})\s*$/;
-
 // Prefixes that start multiline comments: /**, /*, {/*
 const multilinePrefixes = ['/**', '/*', '{/*'];
-const multilinePrefixRegExp = new RegExp(
-  `^\\s*(?:${regExpChoices(multilinePrefixes)})\\s*`
-);
-
-// Suffixes that end multiline comments: /**, /*, {/*
-const multilineSuffixes = ['*/', '*/}'];
-const multilineSuffixRegExp = new RegExp(
-  `\\s*(?:${regExpChoices(multilineSuffixes)})\\s*$`
-);
 
 // Prefixes of lines inside a multiline comment: /**, /*, {/*
 const multilineInsidePrefixes = ['*', '//', '#'];
+
+const allPrefixes = [...multilinePrefixes, ...multilineInsidePrefixes];
+
+// Suffixes that end multiline comments: /**, /*, {/*
+const multilineSuffixes = ['*/', '*/}'];
+
+// Comment prefixes: //, #, *, /**, /*, {/*
+const prefixRegExp = new RegExp(
+  `^\\s*(?:${regExpChoices(allPrefixes)})[ \\t]*`
+);
+
+// Multiline comment prefix
+const multilinePrefixRegExp = new RegExp(
+  `^\\s*(?:${regExpChoices(multilinePrefixes)})[ \\t]*`
+);
+
+// Comment suffix (can be only on multiline comments)
+const suffixRegExp = new RegExp(
+  `\\s*(?:${regExpChoices(multilineSuffixes)})\\s*$`
+);
 
 // List item markers: -, *, - [ ], - [x], etc.
 const listItemRegExp = /^\s*([-*])(\s+\[[ xX]\])?\s*/;
@@ -69,8 +73,9 @@ export function isCommentStart(text: string) {
  * `// foo` → false
  */
 export function isCommentEnd(text: string) {
-  return multilineSuffixRegExp.test(text);
+  return suffixRegExp.test(text);
 }
+
 /**
  * Checks whether a given line is a paragraph break in a multiline comment.
  *
@@ -84,6 +89,23 @@ export function isCommentEnd(text: string) {
  */
 export function isCommentBreak(text: string) {
   return multilineInsidePrefixes.includes(text.trim());
+}
+
+/**
+ * Checks whether a given line is a line inside a comment.
+ *
+ * Examples:
+ * `/* foo` → true
+ * `foo *_/` → true (ignore _)
+ * ` * foo` → true
+ * `// foo` → true
+ * ` *` → true
+ * `//` → true
+ * `alert()` → false
+ * `` → false
+ */
+export function isComment(text: string) {
+  return prefixRegExp.test(text);
 }
 
 /**

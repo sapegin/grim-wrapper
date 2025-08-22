@@ -2,6 +2,7 @@ import { test, expect, describe } from 'vitest';
 import {
   getAvailableLength,
   getCommentPrefix,
+  isComment,
   isCommentBreak,
   isCommentEnd,
   isCommentStart,
@@ -60,6 +61,29 @@ describe('isCommentBreak', () => {
     ['  *', true],
   ])('returns prefix: %s', (input, expected) => {
     const result = isCommentBreak(input);
+    expect(result).toBe(expected);
+  });
+});
+
+describe('isComment', () => {
+  test.each([
+    ['// No buy year wolf chambray kale chips.', true],
+    ['  // No buy year wolf chambray kale chips.', true],
+    ['\t// No buy year wolf chambray kale chips.', true],
+    ['  /* No buy year wolf chambray kale chips. */', true],
+    ['  /** No buy year wolf chambray kale chips. */', true],
+    ['  {/* No buy year wolf chambray kale chips. */}', true],
+    ['  # No buy year wolf chambray kale chips.', true],
+    ['  /* No buy year wolf chambray kale chips. */', true],
+    ['  /** No buy year wolf chambray kale chips. */', true],
+    ['  {/* No buy year wolf chambray kale chips. */}', true],
+    ['  # No buy year wolf chambray kale chips.', true],
+    ['  #', true],
+    ['  //', true],
+    ['  *', true],
+    ['No buy year wolf chambray kale chips.', false],
+  ])('returns prefix: %s', (input, expected) => {
+    const result = isComment(input);
     expect(result).toBe(expected);
   });
 });

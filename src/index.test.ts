@@ -476,6 +476,23 @@ wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
 \t// kitsch.\n\t// TODO: Short one\n\t// TODO: Artisan messenger bag Helvetica TikTok whatever Mauerpark fanny pack
 \t// meh jean shorts freegan direct trade aesthetic sustainable small batch.`,
     ],
+    [
+      // Some weirdly formatted comment
+      `/*
+Bicycle rights disrupt craft beer butcher bagel
+biodiesel vintage asymmetrical wet cappuccino
+*/`,
+      `/*
+ * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+ * asymmetrical wet cappuccino
+ */`,
+    ],
+    [
+      `// See here: https://example.com/1234567890123456789012345678901234567890123456789012345678901234567890.html how to install things.`,
+      `// See here:
+// https://example.com/1234567890123456789012345678901234567890123456789012345678901234567890.html
+// how to install things.`,
+    ],
   ])('wraps comment: %s', (input, expected) => {
     const result = wrapComment(input);
     expect(result).toBe(expected);

@@ -1,6 +1,3 @@
-// TODO: Test with @example tag
-// TODO: Test with words longer than max length (URL for example)
-// TODO: Support /* foo\nbar\baz */ /* foo\nbar\baz\n\nfoo\nbar\baz\n\nfoo\nbar\baz */
 // TODO: Support nested lists
 // TODO: Support ordered lists
 // TODO: Maybe: Normalize list markers to `-` similar to Prettier

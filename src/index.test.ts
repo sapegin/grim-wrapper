@@ -7,7 +7,7 @@ import {
   isCommentBreak,
   isCommentEnd,
   isCommentStart,
-  isListItemOrJsDocTag,
+  isListItemOrTag,
   normalizeCommentPrefix,
   splitIntoChunks,
   splitIntoLines,
@@ -273,7 +273,7 @@ describe('splitIntoLines', () => {
   });
 });
 
-describe('isListItemOrJsDocTag', () => {
+describe('isListItemOrTag', () => {
   test.each([
     ['Tacos al pastor', false],
     ['- Eins', true],
@@ -293,8 +293,9 @@ describe('isListItemOrJsDocTag', () => {
     ['* [X] Eins', true],
     ['* [X]Eins', true],
     ['@param foo', true],
+    ['TODO: foo', true],
   ])('returns true if list or JSDoc: %s', (text, expected) => {
-    const result = isListItemOrJsDocTag(text);
+    const result = isListItemOrTag(text);
     expect(result).toEqual(expected);
   });
 });
@@ -335,6 +336,18 @@ describe('splitIntoChunks', () => {
         'No buy year wolf chambray kale chips.',
         '@param foo Something',
         '@param bar Something else',
+      ],
+    ],
+    [
+      [
+        'TODO: No buy year wolf chambray kale chips.',
+        'TODO: Something',
+        'TODO: Something else',
+      ],
+      [
+        'TODO: No buy year wolf chambray kale chips.',
+        'TODO: Something',
+        'TODO: Something else',
       ],
     ],
     [
@@ -454,6 +467,14 @@ wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
 \t *     pack meh jean shorts freegan direct trade aesthetic sustainable small
 \t *     batch.
 \t */`,
+    ],
+    [
+      // Comments with TODO: items
+      '\t// TODO: Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.\n\t// TODO: Short one\n\t// TODO: Artisan messenger bag Helvetica TikTok whatever Mauerpark fanny pack meh jean shorts freegan direct trade  aesthetic sustainable small batch.',
+      `\t// TODO: Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+\t// asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
+\t// kitsch.\n\t// TODO: Short one\n\t// TODO: Artisan messenger bag Helvetica TikTok whatever Mauerpark fanny pack
+\t// meh jean shorts freegan direct trade aesthetic sustainable small batch.`,
     ],
   ])('wraps comment: %s', (input, expected) => {
     const result = wrapComment(input);

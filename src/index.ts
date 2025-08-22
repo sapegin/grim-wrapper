@@ -4,7 +4,7 @@
 // TODO: Support nested lists
 // TODO: Support ordered lists
 // TODO: Maybe: Normalize list markers to `-` similar to Prettier
-// TODO: Treat `TODO:` and such markers as new paragraph (similar to @todo)
+// TODO: Two spaces at the end of a line preserves the line break after it. This comes from Markdown should work for any content.
 
 /**
  * Escapes special characters in a string to be used safely in a regular
@@ -54,6 +54,9 @@ const listItemRegExp = /^\s*([-*])(\s+\[[ xX]\])?\s*/;
 
 // JSDoc tag: @param, @returns
 const jsDocRegExp = /^\s*@\w+\s*/;
+
+// Comment tag: TODO:, HACK:
+const tagRegExp = /^\s*[A-Z]+:\s*/;
 
 /**
  * Checks whether a given line is the beginning of a multiline comment.
@@ -204,8 +207,10 @@ export function splitIntoLines(text: string) {
 /**
  * Checks whether a given line starts with a list marker or JSDoc tag.
  */
-export function isListItemOrJsDocTag(text: string) {
-  return listItemRegExp.test(text) || jsDocRegExp.test(text);
+export function isListItemOrTag(text: string) {
+  return (
+    listItemRegExp.test(text) || jsDocRegExp.test(text) || tagRegExp.test(text)
+  );
 }
 
 /**
@@ -224,7 +229,7 @@ export function splitIntoChunks(lines: string[]): string[] {
 
   for (const line of lines) {
     // A list item marker or JSDoc tag starts a new chunk
-    if (isListItemOrJsDocTag(line) && currentChunk.length > 0) {
+    if (isListItemOrTag(line) && currentChunk.length > 0) {
       chunks.push(currentChunk);
       currentChunk = [];
     }
@@ -310,7 +315,7 @@ export function wrapComment(comment: string, maxLength = 80) {
 
   const lines = [];
   for (const chunk of chunks) {
-    const wrappedLines = isListItemOrJsDocTag(chunk)
+    const wrappedLines = isListItemOrTag(chunk)
       ? wrapListItem(chunk, availableMaxLength)
       : wrapTextBlock(chunk, availableMaxLength);
 

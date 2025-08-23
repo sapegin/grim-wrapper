@@ -324,6 +324,10 @@ describe('isListItemOrTag', () => {
     ['- [X]Eins', true],
     ['* [X] Eins', true],
     ['* [X]Eins', true],
+    ['1. Eins', true],
+    ['1.Eins', true],
+    ['22. Eins', true],
+    ['22.Eins', true],
     ['@param foo', true],
     ['TODO: foo', true],
   ])('returns true if list or JSDoc: %s', (text, expected) => {
@@ -498,12 +502,38 @@ wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
     -->`,
     ],
     [
-      // Comments with multiple chunks: Markdown list
+      // Comments with multiple chunks: Markdown unordered list
       'No buy year wolf chambray kale chips.\n- Eins, zwei, polizei\n- Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.',
       `No buy year wolf chambray kale chips.
 - Eins, zwei, polizei
 - Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical
   wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
+    ],
+    [
+      // Comments with multiple chunks: Markdown ordered list
+      'No buy year wolf chambray kale chips.\n1. Eins, zwei, polizei\n2. Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.',
+      `No buy year wolf chambray kale chips.
+1. Eins, zwei, polizei
+2. Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+   asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
+   kitsch.`,
+    ],
+    [
+      // Nested lists
+      `// We use two methods of detecting paragraphs:
+// - Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino.
+//   - No buy year wolf chambray kale chips vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
+//   - Adds necessary spacing on the bottom of the page for the mobile navigation bar and floating banner to make the footer accessible.
+// - Another list item. Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino.`,
+      `// We use two methods of detecting paragraphs:
+// - Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+//   asymmetrical wet cappuccino.
+//   - No buy year wolf chambray kale chips vintage asymmetrical wet cappuccino
+//     underconsuption High Life Prenzlauer Berg chia kitsch.
+//   - Adds necessary spacing on the bottom of the page for the mobile
+//     navigation bar and floating banner to make the footer accessible.
+// - Another list item. Bicycle rights disrupt craft beer butcher bagel
+//   biodiesel vintage asymmetrical wet cappuccino.`,
     ],
     [
       // Nested list that doesn't need wrapping

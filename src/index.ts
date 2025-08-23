@@ -1,4 +1,3 @@
-// TODO: Support ordered lists
 // TODO: Maybe: Normalize list markers to `-` similar to Prettier
 // TODO: Two spaces at the end of a line preserves the line break after it. This comes from Markdown should work for any content.
 
@@ -43,8 +42,8 @@ const multilinePrefixRegExp = new RegExp(
 // Comment suffix (can be only on multiline comments)
 const suffixRegExp = new RegExp(`(?:${regExpChoices(multilineSuffixes)})\\s*$`);
 
-// List item markers: -, *, - [ ], - [x], etc.
-const listItemRegExp = /^\s*([-*])(\s+\[[ xX]\])?\s*/;
+// List item markers: -, *, - [ ], - [x], 1., etc.
+const listItemRegExp = /^\s*([-*]|\d+\.)(\s+\[[ xX]\])?\s*/;
 
 // JSDoc tag: @param, @returns
 const jsDocRegExp = /^\s*@\w+\s*/;

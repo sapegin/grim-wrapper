@@ -45,6 +45,8 @@ I’ve been using [Rewrap](https://stkb.github.io/Rewrap/) for a long time, but 
 - Often weird formatting of multiline comments (`/* ... */`, etc.).
 - I don’t like the way it format Markdown todos and JSDoc tags.
 
+Check out [samples](https://github.com/sapegin/vscode-grim-wrapper/tree/main/samples) to get an idea how it formats comments.
+
 ## Sponsoring
 
 This software has been developed with lots of coffee, buy me one more cup to keep it going.

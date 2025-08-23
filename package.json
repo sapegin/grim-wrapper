@@ -10,7 +10,7 @@
     "lint": "eslint . --cache --fix",
     "test:vitest": "vitest run",
     "test:watch": "vitest",
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json",
     "format": "prettier --write \"**/*.{js,mjc,cjs,ts,tsx,json,jsonc,md}\"",
     "prepublish": "npm run build",
     "prepare": "husky"

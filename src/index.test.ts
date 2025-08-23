@@ -243,6 +243,38 @@ describe('stripFormatting', () => {
         'kitsch.',
       ],
     ],
+    [
+      `// We use two methods of detecting paragraphs:
+// - Code comments:
+//   - any lines between comment start/end (including)
+//   - "empty" line (such as this or that)
+// - Plain text:
+//   - any lines between empty lines`,
+      [
+        `We use two methods of detecting paragraphs:`,
+        `- Code comments:`,
+        `  - any lines between comment start/end (including)`,
+        `  - "empty" line (such as this or that)`,
+        `- Plain text:`,
+        `  - any lines between empty lines`,
+      ],
+    ],
+    [
+      `We use two methods of detecting paragraphs:
+- Code comments:
+  - any lines between comment start/end (including)
+  - "empty" line (such as this or that)
+- Plain text:
+  - any lines between empty lines`,
+      [
+        `We use two methods of detecting paragraphs:`,
+        `- Code comments:`,
+        `  - any lines between comment start/end (including)`,
+        `  - "empty" line (such as this or that)`,
+        `- Plain text:`,
+        `  - any lines between empty lines`,
+      ],
+    ],
   ])('returns normalized prefix: %s', (input, expected) => {
     const result = stripFormatting(input);
     expect(result).toEqual(expected);
@@ -362,6 +394,24 @@ describe('splitIntoChunks', () => {
       ['- [ ] Polizei', '- [x] Polizei', '* [ ] Polizei', '* [x] Polizei'],
       ['- [ ] Polizei', '- [x] Polizei', '* [ ] Polizei', '* [x] Polizei'],
     ],
+    [
+      [
+        `We use two methods of detecting paragraphs:`,
+        `- Code comments:`,
+        `  - any lines between comment start/end (including)`,
+        `  - "empty" line (such as this or that)`,
+        `- Plain text:`,
+        `  - any lines between empty lines`,
+      ],
+      [
+        `We use two methods of detecting paragraphs:`,
+        `- Code comments:`,
+        `  - any lines between comment start/end (including)`,
+        `  - "empty" line (such as this or that)`,
+        `- Plain text:`,
+        `  - any lines between empty lines`,
+      ],
+    ],
   ])('returns an array of chunks: %s', (lines, expected) => {
     const result = splitIntoChunks(lines);
     expect(result).toEqual(expected);
@@ -454,6 +504,21 @@ wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
 - Eins, zwei, polizei
 - Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical
   wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
+    ],
+    [
+      // Nested list that doesn't need wrapping
+      `// We use two methods of detecting paragraphs:
+// - Code comments:
+//   - any lines between comment start/end (including)
+//   - "empty" line (such as this or that)
+// - Plain text:
+//   - any lines between empty lines`,
+      `// We use two methods of detecting paragraphs:
+// - Code comments:
+//   - any lines between comment start/end (including)
+//   - "empty" line (such as this or that)
+// - Plain text:
+//   - any lines between empty lines`,
     ],
     [
       // Comments with multiple chunks: JSDoc

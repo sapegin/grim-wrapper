@@ -1,4 +1,3 @@
-// TODO: Support nested lists
 // TODO: Support ordered lists
 // TODO: Maybe: Normalize list markers to `-` similar to Prettier
 // TODO: Two spaces at the end of a line preserves the line break after it. This comes from Markdown should work for any content.
@@ -34,13 +33,11 @@ const allPrefixes = [...multilinePrefixes, ...multilineInsidePrefixes];
 const multilineSuffixes = ['*/', '*/}', '-->'];
 
 // Comment prefixes: //, #, *, /**, /*, {/*
-const prefixRegExp = new RegExp(
-  `^\\s*(?:${regExpChoices(allPrefixes)})[ \\t]*`
-);
+const prefixRegExp = new RegExp(`^\\s*(?:${regExpChoices(allPrefixes)}) ?`);
 
 // Multiline comment prefix
 const multilinePrefixRegExp = new RegExp(
-  `^\\s*(?:${regExpChoices(multilinePrefixes)})[ \\t]*`
+  `^\\s*(?:${regExpChoices(multilinePrefixes)}) ?`
 );
 
 // Comment suffix (can be only on multiline comments)
@@ -180,10 +177,10 @@ export function stripFormatting(text: string) {
       .map((line) => line.replace(suffixRegExp, ''))
       // Remove prefixes (/*, //)
       .map((line) => line.replace(prefixRegExp, ''))
-      // Remove leading/trailing whitespace
-      .map((line) => line.trim())
+      // Remove trailing whitespace
+      .map((line) => line.trimEnd())
       // Filter out empty lines
-      .filter((line) => line !== '')
+      .filter((line) => line.trim() !== '')
   );
 }
 

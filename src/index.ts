@@ -147,8 +147,10 @@ export function normalizeCommentPrefix(prefix: string) {
   }
 
   const normalizedPrefix = prefix
-    // Replace the opening marker (/*, {/*) with a continuation marker (*)
-    .replace(/\{?\/\*+/, ' *')
+    // Replace the opening marker ({/*) with a continuation marker (*)
+    .replace(/\{\/\*+/, '  *')
+    // Replace the opening marker (/*) with a continuation marker (*)
+    .replace(/\/\*+/, ' *')
     // Remove the opening marker (<!--)
     .replace(/<!--[ \t]*/, '');
 

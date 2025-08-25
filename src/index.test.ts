@@ -126,7 +126,7 @@ describe('normalizeCommentPrefix', () => {
     ['\t// ', '\t// '],
     ['  /* ', '   * '],
     ['  /** ', '   * '],
-    ['  {/* ', '   * '],
+    ['  {/* ', '    * '],
     ['  <!-- ', '  '],
     ['  # ', '  # '],
     ['', ''],
@@ -482,12 +482,13 @@ wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
 `,
     ],
     [
-      // Wraps a paragraph inside a /* ... */ comment
-      `  * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
+      // Wraps a paragraph inside a /* ... */ or {/* ... */} comment (should
+      // preserve the indentation)
+      `   * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
       `
-  * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
-  * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
-  * kitsch.
+   * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+   * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
+   * kitsch.
 `,
     ],
     [
@@ -506,10 +507,10 @@ wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
       '{/* Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch. */}',
       `
 {/*
- * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
- * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
- * kitsch.
- */}
+  * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+  * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
+  * kitsch.
+  */}
 `,
     ],
     [

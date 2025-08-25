@@ -15,6 +15,10 @@ import {
   wrapComment,
 } from './index.js';
 
+/** Removes leading and trailing line breaks */
+const stripLineBreaks = (text: string) =>
+  text.replace(/^\n+/, '').replace(/\n+$/, '');
+
 describe('isCommentStart', () => {
   test.each([
     ['// No buy year wolf chambray kale chips.', false],
@@ -437,95 +441,120 @@ describe('wrapComment', () => {
     [
       // Wraps basic // comment
       '// Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.',
-      `// Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+      `
+// Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
 // asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
-// kitsch.`,
+// kitsch.
+`,
     ],
     [
       // Wraps basic text
       'Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.',
-      `Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical
-wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
+      `
+Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical
+wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
+`,
     ],
     [
       // Wraps basic /* ... */ comment
       '/* Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch. */',
-      `/*
+      `
+/*
  * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
  * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
  * kitsch.
- */`,
+ */
+`,
     ],
     [
       // Correctly handles already wrapped /* ... */ comment
-      `/**
+      `
+/**
  * Adds necessary spacing on the bottom of the page for the mobile navigation
  * bar and floating banner to make the footer accessible
- */`,
-      `/**
+ */
+`,
+      `
+/**
  * Adds necessary spacing on the bottom of the page for the mobile navigation
  * bar and floating banner to make the footer accessible
- */`,
+ */
+`,
     ],
     [
       // Wraps a paragraph inside a /* ... */ comment
       `  * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
-      `  * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+      `
+  * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
   * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
-  * kitsch.`,
+  * kitsch.
+`,
     ],
     [
       // Wraps basic /** ... */ comment
       '\t/** Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch. */',
-      `\t/**
+      `
+\t/**
 \t * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
 \t * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
 \t * kitsch.
-\t */`,
+\t */
+`,
     ],
     [
       // Wraps basic {/* ... */} comment
       '{/* Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch. */}',
-      `{/*
+      `
+{/*
  * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
  * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
  * kitsch.
- */}`,
+ */}
+`,
     ],
     [
       // Wraps basic <!-- ... --> comment
       '    <!-- Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch. -->',
-      `    <!--
+      `
+    <!--
     Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
     asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
     kitsch.
-    -->`,
+    -->
+`,
     ],
     [
       // Comments with multiple chunks: Markdown unordered list
       'No buy year wolf chambray kale chips.\n- Eins, zwei, polizei\n- Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.',
-      `No buy year wolf chambray kale chips.
+      `
+No buy year wolf chambray kale chips.
 - Eins, zwei, polizei
 - Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical
-  wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
+  wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
+`,
     ],
     [
       // Comments with multiple chunks: Markdown ordered list
       'No buy year wolf chambray kale chips.\n1. Eins, zwei, polizei\n2. Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.',
-      `No buy year wolf chambray kale chips.
+      `
+No buy year wolf chambray kale chips.
 1. Eins, zwei, polizei
 2. Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
    asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
-   kitsch.`,
+   kitsch.
+`,
     ],
     [
       // Nested lists
-      `// We use two methods of detecting paragraphs:
+      `
+// We use two methods of detecting paragraphs:
 // - Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino.
 //   - No buy year wolf chambray kale chips vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
 //   - Adds necessary spacing on the bottom of the page for the mobile navigation bar and floating banner to make the footer accessible.
-// - Another list item. Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino.`,
-      `// We use two methods of detecting paragraphs:
+// - Another list item. Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino.
+`,
+      `
+// We use two methods of detecting paragraphs:
 // - Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
 //   asymmetrical wet cappuccino.
 //   - No buy year wolf chambray kale chips vintage asymmetrical wet cappuccino
@@ -533,11 +562,13 @@ wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
 //   - Adds necessary spacing on the bottom of the page for the mobile
 //     navigation bar and floating banner to make the footer accessible.
 // - Another list item. Bicycle rights disrupt craft beer butcher bagel
-//   biodiesel vintage asymmetrical wet cappuccino.`,
+//   biodiesel vintage asymmetrical wet cappuccino.
+`,
     ],
     [
       // Nested list that doesn't need wrapping
-      `// We use two methods of detecting paragraphs:
+      `
+// We use two methods of detecting paragraphs:
 // - Code comments:
 //   - any lines between comment start/end (including)
 //   - "empty" line (such as this or that)
@@ -548,12 +579,14 @@ wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
 //   - any lines between comment start/end (including)
 //   - "empty" line (such as this or that)
 // - Plain text:
-//   - any lines between empty lines`,
+//   - any lines between empty lines
+`,
     ],
     [
       // Comments with multiple chunks: JSDoc
       '\t/** Bicycle rights disrupt craft beer\nbutcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.\n\t * @param foo Short one\n\t * @param bar Artisan messenger bag Helvetica TikTok whatever Mauerpark fanny pack meh jean shorts freegan direct trade  aesthetic sustainable small batch. */',
-      `\t/**
+      `
+\t/**
 \t * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
 \t * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
 \t * kitsch.
@@ -561,35 +594,45 @@ wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.`,
 \t * @param bar Artisan messenger bag Helvetica TikTok whatever Mauerpark fanny
 \t *     pack meh jean shorts freegan direct trade aesthetic sustainable small
 \t *     batch.
-\t */`,
+\t */
+`,
     ],
     [
       // Comments with TODO: items
       '\t// TODO: Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.\n\t// TODO: Short one\n\t// TODO: Artisan messenger bag Helvetica TikTok whatever Mauerpark fanny pack meh jean shorts freegan direct trade  aesthetic sustainable small batch.',
-      `\t// TODO: Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+      `
+\t// TODO: Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
 \t// asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
 \t// kitsch.\n\t// TODO: Short one\n\t// TODO: Artisan messenger bag Helvetica TikTok whatever Mauerpark fanny pack
-\t// meh jean shorts freegan direct trade aesthetic sustainable small batch.`,
+\t// meh jean shorts freegan direct trade aesthetic sustainable small batch.
+`,
     ],
     [
       // Some weirdly formatted comment
-      `/*
+      `
+/*
 Bicycle rights disrupt craft beer butcher bagel
 biodiesel vintage asymmetrical wet cappuccino
-*/`,
-      `/*
+*/
+`,
+      `
+/*
  * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
  * asymmetrical wet cappuccino
- */`,
+ */
+`,
     ],
     [
-      `// See here: https://example.com/1234567890123456789012345678901234567890123456789012345678901234567890.html how to install things.`,
-      `// See here:
+      `
+// See here: https://example.com/1234567890123456789012345678901234567890123456789012345678901234567890.html how to install things.`,
+      `
+// See here:
 // https://example.com/1234567890123456789012345678901234567890123456789012345678901234567890.html
-// how to install things.`,
+// how to install things.
+`,
     ],
   ])('wraps comment: %s', (input, expected) => {
-    const result = wrapComment(input);
-    expect(result).toBe(expected);
+    const result = wrapComment(stripLineBreaks(input));
+    expect(result).toBe(stripLineBreaks(expected));
   });
 });

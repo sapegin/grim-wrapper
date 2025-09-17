@@ -296,7 +296,7 @@ export function wrapListItem(chunk: string, maxLength: number) {
  * Wrap a single paragraph in a code comment, Markdown, or plain text.
  */
 export function wrapComment(comment: string, maxLength = 80) {
-  if (comment.length <= maxLength) {
+  if (splitIntoLines(comment).length === 1 && comment.length <= maxLength) {
     // The whole comment is short enough, no need to do anything
     return comment;
   }

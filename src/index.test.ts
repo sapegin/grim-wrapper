@@ -467,6 +467,16 @@ wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
 `,
     ],
     [
+      // Wraps short multiline comment
+      `
+  // Cursor commands.
+  // Need to be copied, doesn't work with symlinks
+`,
+      `
+  // Cursor commands. Need to be copied, doesn't work with symlinks
+`,
+    ],
+    [
       // Correctly handles already wrapped /* ... */ comment
       `
 /**

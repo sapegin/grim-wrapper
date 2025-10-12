@@ -21,7 +21,7 @@ export function regExpChoices(choices: string[]): string {
 const JSDOC_INDENT = 4;
 
 // Prefixes that start multiline comments: /**, /*, {/*
-const multilinePrefixes = ['/**', '/*', '{/*', '<!--'];
+const multilinePrefixes = ['/**', '/*', '{/**', '{/*', '<!--'];
 
 // Prefixes of lines inside a multiline comment: /**, /*, {/*
 const multilineInsidePrefixes = ['*', '//', '#'];
@@ -115,7 +115,9 @@ export function isComment(text: string) {
  */
 export function getCommentPrefix(text: string) {
   const match = text.match(prefixRegExp);
-  return match ? match[0] : '';
+  // Return the prefix but handle special cases:
+  // - Remove the second * on JSX prefix: {/**
+  return match ? match[0].replace('{/**', '{/*') : '';
 }
 
 /**
@@ -147,12 +149,12 @@ export function normalizeCommentPrefix(prefix: string) {
   }
 
   const normalizedPrefix = prefix
-    // Replace the opening marker ({/*) with a continuation marker (*)
-    .replace(/\{\/\*+/, '  *')
-    // Replace the opening marker (/*) with a continuation marker (*)
-    .replace(/\/\*+/, ' *')
-    // Remove the opening marker (<!--)
-    .replace(/<!--[ \t]*/, '');
+    // Remove HTML opening marker (<!--)
+    .replace(/<!--[ \t]*\s*/, '')
+    // Remove JSX opening marker ({/*)
+    .replace(/\{\/\*+\s*/, '')
+    // Replace multiline C-style opening marker (/*) with a continuation marker (*)
+    .replace(/\/\*+/, ' *');
 
   // If we end up with an empty string or whitespace (for example, in HTML),
   // return an empty string

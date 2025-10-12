@@ -47,6 +47,24 @@ I’ve been using [Rewrap](https://stkb.github.io/Rewrap/) for a long time, but 
 
 Check out [samples](https://github.com/sapegin/vscode-grim-wrapper/tree/main/samples) to get an idea how it formats comments.
 
+## Guidelines
+
+- Separate the comment from the marker with a space (`// Comment` or `/* Comment */`).
+- Write in sentence case (`Comment here, comment there`).
+- Finish sentences with a dot (`.`) for JSDoc comments, feel free to skip it for single-line comments.
+- Prefer line comments (`//` or `#`) to block comments (`/* ... */`) for documenting code inside functions.
+- Prefer JSDocs comments (`/** ... */`) to document functions, methods, classes, constants, types, etc.
+- Prefer comments on their own line. Avoid end-of-line comments.
+- Use prefixes such as `TODO` or `HACK` to highlight unfinished or hacky code.
+
+## Sources
+
+- [Google style guides](https://google.github.io/styleguide/)
+- [Airbnb JavaScript style guide](https://github.com/airbnb/javascript?tab=readme-ov-file#comments)
+- [Principles of writing consistent, idiomatic CSS by Nicolas Gallagher](https://github.com/necolas/idiomatic-css?tab=readme-ov-file#comments)
+- [CSS guidelines by Harry Roberts](https://cssguidelin.es/#commenting)
+- [jQuery HTML Style Guide](https://contribute.jquery.org/style-guide/html/#comments)
+
 ## Sponsoring
 
 This software has been developed with lots of coffee, buy me one more cup to keep it going.

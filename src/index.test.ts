@@ -103,6 +103,8 @@ describe('getCommentPrefix', () => {
     ['\t// No buy year wolf chambray kale chips.', '\t// '],
     ['  /* No buy year wolf chambray kale chips. */', '  /* '],
     ['  /** No buy year wolf chambray kale chips. */', '  /** '],
+    ['  {/* No buy year wolf chambray kale chips. */}', '  {/* '],
+    ['  {/** No buy year wolf chambray kale chips. */}', '  {/* '],
     ['  # No buy year wolf chambray kale chips.', '  # '],
     ['  <!-- No buy year wolf chambray kale chips. -->', '  <!-- '],
     ['No buy year wolf chambray kale chips.', ''],
@@ -126,7 +128,8 @@ describe('normalizeCommentPrefix', () => {
     ['\t// ', '\t// '],
     ['  /* ', '   * '],
     ['  /** ', '   * '],
-    ['  {/* ', '    * '],
+    ['  {/* ', '  '],
+    ['  {/** ', '  '],
     ['  <!-- ', '  '],
     ['  # ', '  # '],
     ['', ''],
@@ -517,10 +520,35 @@ wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
       '{/* Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch. */}',
       `
 {/*
-  * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
-  * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
-  * kitsch.
-  */}
+Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical
+wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
+*/}
+`,
+    ],
+    [
+      // Wraps {/** ... */} comment
+      '{/** Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch. */}',
+      `
+{/*
+Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical
+wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
+*/}
+`,
+    ],
+    [
+      // Wraps {/** ... */} comment with line prefixes
+      `
+{/**
+* Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+* asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
+* kitsch.
+*/}
+`,
+      `
+{/*
+Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical
+wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
+*/}
 `,
     ],
     [

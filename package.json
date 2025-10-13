@@ -15,7 +15,6 @@
     "prepublish": "npm run build",
     "prepare": "husky"
   },
-  "homepage": "https://sapegin.github.io/grim-wrapper/",
   "author": {
     "name": "Artem Sapegin",
     "url": "https://sapegin.me/"

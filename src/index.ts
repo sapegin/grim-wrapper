@@ -90,9 +90,11 @@ export function isCommentEnd(text: string) {
  * - `// foo` → false
  * - ` *` → true
  * - `//` → true
+ * - `` → true
  */
 export function isCommentBreak(text: string) {
-  return multilineInsidePrefixes.includes(text.trim());
+  const trimmedText = text.trim();
+  return trimmedText === '' || multilineInsidePrefixes.includes(trimmedText);
 }
 
 /**
@@ -106,10 +108,11 @@ export function isCommentBreak(text: string) {
  * - ` *` → true
  * - `//` → true
  * - `alert()` → false
- * - `` → false
+ * - `` → true
  */
 export function isComment(text: string) {
-  return prefixRegExp.test(text);
+  const trimmedText = text.trim();
+  return trimmedText === '' || prefixRegExp.test(trimmedText);
 }
 
 /**

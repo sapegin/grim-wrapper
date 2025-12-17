@@ -66,6 +66,8 @@ describe('isCommentBreak', () => {
     ['  #', true],
     ['  //', true],
     ['  *', true],
+    ['  ', true],
+    ['', true],
   ])('returns prefix: %s', (input, expected) => {
     const result = isCommentBreak(input);
     expect(result).toBe(expected);
@@ -89,6 +91,8 @@ describe('isComment', () => {
     ['  #', true],
     ['  //', true],
     ['  *', true],
+    ['  ', true],
+    ['', true],
     ['No buy year wolf chambray kale chips.', false],
   ])('returns prefix: %s', (input, expected) => {
     const result = isComment(input);

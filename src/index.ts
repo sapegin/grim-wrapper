@@ -143,7 +143,7 @@ export function getCommentSuffix(text: string) {
  * Examples:
  * - `//` → `// `
  * - `#` → `# `
- * - `/*` → ` * `
+ * - `/*` → `  ` (two spaces)
  * - `/**` → ` * `
  */
 export function normalizeCommentPrefix(prefix: string) {
@@ -153,18 +153,28 @@ export function normalizeCommentPrefix(prefix: string) {
     return prefix;
   }
 
+  const trimmedPrefix = prefix.trim();
+  const leadingWhitespace = prefix.match(/^\s*/)?.[0] ?? '';
+
+  // Check if it's a /** comment (not JSX) - should use * prefix
+  if (trimmedPrefix === '/**') {
+    return leadingWhitespace + ' * ';
+  }
+
+  // For /* comments and JSX comments ({/* or {/**), use just the leading
+  // whitespace
+  if (trimmedPrefix.startsWith('/*') || trimmedPrefix.startsWith('{/*')) {
+    return leadingWhitespace;
+  }
+
   const normalizedPrefix = prefix
     // Remove HTML opening marker (<!--)
-    .replace(/<!--[ \t]*\s*/, '')
-    // Remove JSX opening marker ({/*)
-    .replace(/\{\/\*+\s*/, '')
-    // Replace multiline C-style opening marker (/*) with a continuation marker (*)
-    .replace(/\/\*+/, ' *');
+    .replace(/<!--[ \t]*\s*/, '');
 
-  // If we end up with an empty string or whitespace (for example, in HTML),
-  // return an empty string
+  // If we end up with an empty string or just whitespace (for HTML comments),
+  // return just the leading whitespace
   if (normalizedPrefix.trim() === '') {
-    return normalizedPrefix;
+    return leadingWhitespace;
   }
 
   // Ensure there's one space at the end
@@ -323,7 +333,17 @@ export function wrapComment(comment: string, maxLength = 80) {
   const firstLinePrefix = getCommentPrefix(comment);
   const normalizedPrefix = normalizeCommentPrefix(firstLinePrefix);
 
-  const availableMaxLength = getAvailableLength(normalizedPrefix, maxLength);
+  // For /* and {/* comments (but not /**), add two spaces for content
+  // indentation
+  const cleanFirstLinePrefix = firstLinePrefix.trim();
+  const needsExtraIndent =
+    (cleanFirstLinePrefix.startsWith('/*') && cleanFirstLinePrefix !== '/**') ||
+    cleanFirstLinePrefix.startsWith('{/*');
+  const contentPrefix = needsExtraIndent
+    ? normalizedPrefix + '  '
+    : normalizedPrefix;
+
+  const availableMaxLength = getAvailableLength(contentPrefix, maxLength);
 
   const lines = [];
   for (const chunk of chunks) {
@@ -334,7 +354,6 @@ export function wrapComment(comment: string, maxLength = 80) {
     lines.push(...wrappedLines);
   }
 
-  const cleanFirstLinePrefix = firstLinePrefix.trim();
   const isMultilineComment = multilinePrefixes.includes(cleanFirstLinePrefix);
   const lastLineSuffix = getCommentSuffix(comment);
   const isSingleLineMultilineComment =
@@ -352,7 +371,7 @@ export function wrapComment(comment: string, maxLength = 80) {
     return comment;
   }
 
-  const prefixedLines = lines.map((line) => `${normalizedPrefix}${line}`);
+  const prefixedLines = lines.map((line) => `${contentPrefix}${line}`);
 
   // Restore opening /*, /**, <!--, etc.
   if (isMultilineComment) {
@@ -361,7 +380,8 @@ export function wrapComment(comment: string, maxLength = 80) {
 
   // Restore closing */, -->, etc.
   if (multilineSuffixes.includes(lastLineSuffix)) {
-    const indentation = normalizedPrefix.replace(/\*\s*$/, '');
+    // Extract the leading whitespace from the normalized prefix
+    const indentation = normalizedPrefix.match(/^\s*/)?.[0] ?? '';
     prefixedLines.push(`${indentation}${lastLineSuffix}`);
   }
 

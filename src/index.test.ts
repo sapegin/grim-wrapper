@@ -126,7 +126,7 @@ describe('normalizeCommentPrefix', () => {
     ['// ', '// '],
     ['  // ', '  // '],
     ['\t// ', '\t// '],
-    ['  /* ', '   * '],
+    ['  /* ', '  '],
     ['  /** ', '   * '],
     ['  {/* ', '  '],
     ['  {/** ', '  '],
@@ -463,10 +463,9 @@ wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
       '/* Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch. */',
       `
 /*
- * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
- * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
- * kitsch.
- */
+  Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical
+  wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
+*/
 `,
     ],
     [
@@ -477,9 +476,9 @@ wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
 `,
       `
   /*
-   * there are no JS events on autofill, so we have to simulate the change on
-   * the adjacent input label, see the styling in the FormInput component
-   */
+    there are no JS events on autofill, so we have to simulate the change on the
+    adjacent input label, see the styling in the FormInput component
+  */
 `,
     ],
     [
@@ -533,8 +532,8 @@ wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
       '{/* Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch. */}',
       `
 {/*
-Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical
-wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
+  Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical
+  wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
 */}
 `,
     ],
@@ -543,8 +542,8 @@ wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
       '{/** Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch. */}',
       `
 {/*
-Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical
-wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
+  Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical
+  wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
 */}
 `,
     ],
@@ -559,8 +558,8 @@ wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
 `,
       `
 {/*
-Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical
-wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
+  Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical
+  wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
 */}
 `,
     ],
@@ -669,9 +668,9 @@ biodiesel vintage asymmetrical wet cappuccino
 `,
       `
 /*
- * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
- * asymmetrical wet cappuccino
- */
+  Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical
+  wet cappuccino
+*/
 `,
     ],
     [
@@ -692,9 +691,9 @@ uBlock origin error pages:
 `,
       `
 /*
- * uBlock origin error pages:
- * - moz-extension://a7bf810e-ecb9-4c69-8123-00aac8bb4f90/document-blocked.html
- */
+  uBlock origin error pages:
+  - moz-extension://a7bf810e-ecb9-4c69-8123-00aac8bb4f90/document-blocked.html
+*/
 `,
     ],
     [
@@ -722,9 +721,9 @@ uBlock origin error pages:
 `,
       `
 /*
- * uBlock origin error pages:
- * - moz-extension://a7bf810e-ecb9-4c69-8123-00aac8bb4f90-00aac8bb4f90/document-blocked.html
- */
+  uBlock origin error pages:
+  - moz-extension://a7bf810e-ecb9-4c69-8123-00aac8bb4f90-00aac8bb4f90/document-blocked.html
+*/
 `,
     ],
     [
@@ -735,11 +734,11 @@ uBlock origin error pages, such as moz-extension://a7bf810e-ecb9-4c69-8123-00aac
 `,
       `
 /*
- * uBlock origin error pages, such as
- * moz-extension://a7bf810e-ecb9-4c69-8123-00aac8bb4f90/document-blocked.html
- * and many others keto literally Mauerpark kogi hella photo booth skateboard
- * quinoa chillwave TikTok scenester meggings.
- */
+  uBlock origin error pages, such as
+  moz-extension://a7bf810e-ecb9-4c69-8123-00aac8bb4f90/document-blocked.html and
+  many others keto literally Mauerpark kogi hella photo booth skateboard quinoa
+  chillwave TikTok scenester meggings.
+*/
 `,
     ],
     [
@@ -750,11 +749,11 @@ uBlock origin error pages, such as moz-extension://a7bf810e-ecb9-4c69-8123-00aac
 `,
       `
 /*
- * uBlock origin error pages, such as
- * moz-extension://a7bf810e-ecb9-4c69-8123-00aac8bb4f90-00aac8bb4f90/document-blocked.html
- * and many others keto literally Mauerpark kogi hella photo booth skateboard
- * quinoa chillwave TikTok scenester meggings.
- */
+  uBlock origin error pages, such as
+  moz-extension://a7bf810e-ecb9-4c69-8123-00aac8bb4f90-00aac8bb4f90/document-blocked.html
+  and many others keto literally Mauerpark kogi hella photo booth skateboard
+  quinoa chillwave TikTok scenester meggings.
+*/
 `,
     ],
   ])('wraps comment: %s', (input, expected) => {

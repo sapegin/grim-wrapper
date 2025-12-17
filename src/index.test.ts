@@ -62,12 +62,12 @@ describe('isCommentBreak', () => {
     ['  /** No buy year wolf chambray kale chips. */', false],
     ['  {/* No buy year wolf chambray kale chips. */}', false],
     ['  # No buy year wolf chambray kale chips.', false],
-    ['No buy year wolf chambray kale chips.', false],
     ['  #', true],
     ['  //', true],
     ['  *', true],
     ['  ', true],
     ['', true],
+    ['Any test that is not a comment', true],
   ])('returns prefix: %s', (input, expected) => {
     const result = isCommentBreak(input);
     expect(result).toBe(expected);

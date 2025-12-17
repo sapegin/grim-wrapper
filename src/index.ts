@@ -81,23 +81,6 @@ export function isCommentEnd(text: string) {
 }
 
 /**
- * Checks whether a given line is a paragraph break in a multiline comment.
- *
- * Examples:
- * - `/* foo` → false
- * - `foo *_/` → false (ignore _)
- * - ` * foo` → false
- * - `// foo` → false
- * - ` *` → true
- * - `//` → true
- * - `` → true
- */
-export function isCommentBreak(text: string) {
-  const trimmedText = text.trim();
-  return trimmedText === '' || multilineInsidePrefixes.includes(trimmedText);
-}
-
-/**
  * Checks whether a given line is a line inside a comment.
  *
  * Examples:
@@ -112,6 +95,25 @@ export function isCommentBreak(text: string) {
  */
 export function isComment(text: string) {
   return prefixRegExp.test(text);
+}
+
+/**
+ * Checks whether a given line is a paragraph break in a multiline comment.
+ *
+ * Examples:
+ * - `/* foo` → false
+ * - `foo *_/` → false (ignore _)
+ * - ` * foo` → false
+ * - `// foo` → false
+ * - ` *` → true
+ * - `//` → true
+ * - `` → true
+ * - `Any test that's not a comment` → true
+ */
+export function isCommentBreak(text: string) {
+  // If it's a prefixed comment the break is any line with a prefix but no context,
+  // otherwise the break is any line
+  return isComment(text) ? multilineInsidePrefixes.includes(text.trim()) : true;
 }
 
 /**

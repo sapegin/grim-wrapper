@@ -91,8 +91,9 @@ describe('isComment', () => {
     ['  #', true],
     ['  //', true],
     ['  *', true],
-    ['  ', true],
-    ['', true],
+    ['  ', false],
+    ['\t', false],
+    ['', false],
     ['No buy year wolf chambray kale chips.', false],
   ])('returns prefix: %s', (input, expected) => {
     const result = isComment(input);

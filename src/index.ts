@@ -108,11 +108,10 @@ export function isCommentBreak(text: string) {
  * - ` *` → true
  * - `//` → true
  * - `alert()` → false
- * - `` → true
+ * - `` → false
  */
 export function isComment(text: string) {
-  const trimmedText = text.trim();
-  return trimmedText === '' || prefixRegExp.test(trimmedText);
+  return prefixRegExp.test(text);
 }
 
 /**

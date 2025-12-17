@@ -469,6 +469,18 @@ wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
 `,
     ],
     [
+      // Keeps * prefixes if they already exist
+      `
+ * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage asymmetrical
+ * wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
+`,
+      `
+ * Bicycle rights disrupt craft beer butcher bagel biodiesel vintage
+ * asymmetrical wet cappuccino underconsuption High Life Prenzlauer Berg chia
+ * kitsch.
+`,
+    ],
+    [
       `
   /* there are no JS events on autofill,
   so we have to simulate the change on the adjacent input label,

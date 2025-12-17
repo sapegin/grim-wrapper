@@ -1,5 +1,6 @@
 // TODO: Maybe: Normalize list markers to `-` similar to Prettier
-// TODO: Two spaces at the end of a line preserves the line break after it. This comes from Markdown should work for any content.
+// TODO: Two spaces at the end of a line preserves the line break after it. This
+// comes from Markdown should work for any content.
 
 /**
  * Escapes special characters in a string to be used safely in a regular
@@ -269,6 +270,10 @@ export function wrapTextBlock(text: string, maxLength: number) {
     lines.push(currentLine);
   }
 
+  if (lines.length === 1 && lines[0].length > maxLength) {
+    return [text];
+  }
+
   return lines;
 }
 
@@ -288,6 +293,10 @@ export function wrapListItem(chunk: string, maxLength: number) {
     '@'.repeat(prefixLength - indentLength) + chunk.replace(prefix, '');
   const lines = wrapTextBlock(cleanChunk, maxLength - indentLength);
 
+  if (lines.length === 1 && lines[0] === cleanChunk) {
+    return [chunk];
+  }
+
   // Return the prefix and indent following lines
   const formattedLines = lines.map((line, index) =>
     index === 0
@@ -302,7 +311,9 @@ export function wrapListItem(chunk: string, maxLength: number) {
  * Wrap a single paragraph in a code comment, Markdown, or plain text.
  */
 export function wrapComment(comment: string, maxLength = 80) {
-  if (splitIntoLines(comment).length === 1 && comment.length <= maxLength) {
+  const originalLineCount = splitIntoLines(comment).length;
+
+  if (originalLineCount === 1 && comment.length <= maxLength) {
     // The whole comment is short enough, no need to do anything
     return comment;
   }
@@ -323,16 +334,32 @@ export function wrapComment(comment: string, maxLength = 80) {
     lines.push(...wrappedLines);
   }
 
+  const cleanFirstLinePrefix = firstLinePrefix.trim();
+  const isMultilineComment = multilinePrefixes.includes(cleanFirstLinePrefix);
+  const lastLineSuffix = getCommentSuffix(comment);
+  const isSingleLineMultilineComment =
+    originalLineCount === 1 &&
+    isMultilineComment &&
+    multilineSuffixes.includes(lastLineSuffix);
+
+  // If it's not a multiline comment and no wrapping occurred, return unchanged
+  // Also, if it's a single-line /* */ comment that can't be wrapped, keep it
+  // as-is
+  if (
+    (isMultilineComment === false || isSingleLineMultilineComment) &&
+    lines.every((line, index) => line === chunks[index])
+  ) {
+    return comment;
+  }
+
   const prefixedLines = lines.map((line) => `${normalizedPrefix}${line}`);
 
   // Restore opening /*, /**, <!--, etc.
-  const cleanFirstLinePrefix = firstLinePrefix.trim();
-  if (multilinePrefixes.includes(cleanFirstLinePrefix)) {
+  if (isMultilineComment) {
     prefixedLines.unshift(firstLinePrefix.trimEnd());
   }
 
   // Restore closing */, -->, etc.
-  const lastLineSuffix = getCommentSuffix(comment);
   if (multilineSuffixes.includes(lastLineSuffix)) {
     const indentation = normalizedPrefix.replace(/\*\s*$/, '');
     prefixedLines.push(`${indentation}${lastLineSuffix}`);

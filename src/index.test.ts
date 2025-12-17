@@ -647,7 +647,7 @@ No buy year wolf chambray kale chips.
 `,
     ],
     [
-      // Some weirdly formatted comment
+      // Weirdly formatted comments and regressions
       `
 /*
 Bicycle rights disrupt craft beer butcher bagel
@@ -668,6 +668,80 @@ biodiesel vintage asymmetrical wet cappuccino
 // See here:
 // https://example.com/1234567890123456789012345678901234567890123456789012345678901234567890.html
 // how to install things.
+`,
+    ],
+    [
+      `
+/*
+uBlock origin error pages:
+- moz-extension://a7bf810e-ecb9-4c69-8123-00aac8bb4f90/document-blocked.html
+*/
+`,
+      `
+/*
+ * uBlock origin error pages:
+ * - moz-extension://a7bf810e-ecb9-4c69-8123-00aac8bb4f90/document-blocked.html
+ */
+`,
+    ],
+    [
+      `
+/* moz-extension://a7bf810e-ecb9-4c69-8123-00aac8bb4f90/document-blocked.html */
+`,
+      `
+/* moz-extension://a7bf810e-ecb9-4c69-8123-00aac8bb4f90/document-blocked.html */
+`,
+    ],
+    [
+      `
+/* moz-extension://a7bf810e-ecb9-4c69-8123-00aac8bb4f90-00aac8bb4f90/document-blocked.html */
+`,
+      `
+/* moz-extension://a7bf810e-ecb9-4c69-8123-00aac8bb4f90-00aac8bb4f90/document-blocked.html */
+`,
+    ],
+    [
+      `
+/*
+uBlock origin error pages:
+- moz-extension://a7bf810e-ecb9-4c69-8123-00aac8bb4f90-00aac8bb4f90/document-blocked.html
+*/
+`,
+      `
+/*
+ * uBlock origin error pages:
+ * - moz-extension://a7bf810e-ecb9-4c69-8123-00aac8bb4f90-00aac8bb4f90/document-blocked.html
+ */
+`,
+    ],
+    [
+      `
+/*
+uBlock origin error pages, such as moz-extension://a7bf810e-ecb9-4c69-8123-00aac8bb4f90/document-blocked.html and many others keto literally Mauerpark kogi hella photo booth skateboard quinoa chillwave TikTok scenester meggings.
+*/
+`,
+      `
+/*
+ * uBlock origin error pages, such as
+ * moz-extension://a7bf810e-ecb9-4c69-8123-00aac8bb4f90/document-blocked.html
+ * and many others keto literally Mauerpark kogi hella photo booth skateboard
+ * quinoa chillwave TikTok scenester meggings.
+ */
+`,
+    ],
+    [
+      `
+/*
+uBlock origin error pages, such as moz-extension://a7bf810e-ecb9-4c69-8123-00aac8bb4f90-00aac8bb4f90/document-blocked.html and many others keto literally Mauerpark kogi hella photo booth skateboard quinoa chillwave TikTok scenester meggings.
+*/
+`,
+      `
+/*
+ * uBlock origin error pages, such as
+ * moz-extension://a7bf810e-ecb9-4c69-8123-00aac8bb4f90-00aac8bb4f90/document-blocked.html
+ * and many others keto literally Mauerpark kogi hella photo booth skateboard
+ * quinoa chillwave TikTok scenester meggings.
+ */
 `,
     ],
   ])('wraps comment: %s', (input, expected) => {

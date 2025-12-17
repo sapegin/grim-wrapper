@@ -470,6 +470,19 @@ wet cappuccino underconsuption High Life Prenzlauer Berg chia kitsch.
 `,
     ],
     [
+      `
+  /* there are no JS events on autofill,
+  so we have to simulate the change on the adjacent input label,
+  see the styling in the FormInput component */
+`,
+      `
+  /*
+   * there are no JS events on autofill, so we have to simulate the change on
+   * the adjacent input label, see the styling in the FormInput component
+   */
+`,
+    ],
+    [
       // Wraps short multiline comment
       `
   // Cursor commands.

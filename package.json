@@ -1,7 +1,7 @@
 {
   "name": "grim-wrapper",
   "description": "Rewrap comment blocks to make them readable",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "sideEffects": false,
   "scripts": {
     "pretest": "npm run lint",

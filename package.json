@@ -38,15 +38,15 @@
   },
   "devDependencies": {
     "@types/node": "^24.7.1",
-    "eslint": "^9.37.0",
-    "eslint-config-tamia": "^9.4.3",
+    "eslint": "^9.39.2",
+    "eslint-config-tamia": "^9.9.1",
     "husky": "^9.1.7",
-    "lint-staged": "^16.2.4",
-    "prettier": "^3.6.2",
+    "nano-staged": "0.9.0",
+    "prettier": "^3.7.4",
     "typescript": "^5.9",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.16"
   },
-  "lint-staged": {
+  "nano-staged": {
     "*.{js,mjc,cjs,ts,tsx}": "eslint --cache --fix",
     "*.{js,mjc,cjs,ts,tsx,json,jsonc,md}": "prettier --write"
   }

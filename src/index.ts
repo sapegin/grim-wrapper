@@ -32,15 +32,19 @@ const allPrefixes = [...multilinePrefixes, ...multilineInsidePrefixes];
 const multilineSuffixes = ['*/', '*/}', '-->'];
 
 // Comment prefixes: //, #, *, /**, /*, {/*
-const prefixRegExp = new RegExp(`^\\s*(?:${regExpChoices(allPrefixes)}) ?`);
+const prefixRegExp = new RegExp(
+  String.raw`^\s*(?:${regExpChoices(allPrefixes)}) ?`
+);
 
 // Multiline comment prefix
 const multilinePrefixRegExp = new RegExp(
-  `^\\s*(?:${regExpChoices(multilinePrefixes)}) ?`
+  String.raw`^\s*(?:${regExpChoices(multilinePrefixes)}) ?`
 );
 
 // Comment suffix (can be only on multiline comments)
-const suffixRegExp = new RegExp(`(?:${regExpChoices(multilineSuffixes)})\\s*$`);
+const suffixRegExp = new RegExp(
+  String.raw`(?:${regExpChoices(multilineSuffixes)})\s*$`
+);
 
 // List item markers: -, *, - [ ], - [x], 1., etc.
 const listItemRegExp = /^\s*([-*]|\d+\.)(\s+\[[ xX]\])?\s*/;
@@ -272,7 +276,7 @@ export function wrapTextBlock(text: string, maxLength: number) {
  * Wraps a single list item or JDoc tag.
  */
 export function wrapListItem(chunk: string, maxLength: number) {
-  const match = chunk.match(listItemRegExp) || chunk.match(jsDocRegExp);
+  const match = chunk.match(listItemRegExp) ?? chunk.match(jsDocRegExp);
   const prefix = Array.isArray(match) ? match[0] : '';
   const prefixLength = prefix.length;
   const indentLength = jsDocRegExp.test(chunk) ? JSDOC_INDENT : prefix.length;

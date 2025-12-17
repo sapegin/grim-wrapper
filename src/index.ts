@@ -42,6 +42,11 @@ const multilinePrefixRegExp = new RegExp(
   String.raw`^\s*(?:${regExpChoices(multilinePrefixes)}) ?`
 );
 
+// Multiline inside comment prefix
+const multilineInsidePrefixRegExp = new RegExp(
+  String.raw`^\s*(?:${regExpChoices(multilineInsidePrefixes)}) ?`
+);
+
 // Comment suffix (can be only on multiline comments)
 const suffixRegExp = new RegExp(
   String.raw`(?:${regExpChoices(multilineSuffixes)})\s*$`
@@ -95,6 +100,23 @@ export function isCommentEnd(text: string) {
  */
 export function isComment(text: string) {
   return prefixRegExp.test(text);
+}
+
+/**
+ * Checks whether a given line is a line inside a multiline comment but not comment beginning.
+ *
+ * Examples:
+ * - `/* foo` → false
+ * - `foo *_/` → false (ignore _)
+ * - ` * foo` → true
+ * - `// foo` → true
+ * - ` *` → true
+ * - `//` → true
+ * - `alert()` → false
+ * - `` → false
+ */
+export function isInsideMultilineComment(text: string) {
+  return multilineInsidePrefixRegExp.test(text);
 }
 
 /**

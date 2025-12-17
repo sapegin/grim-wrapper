@@ -7,6 +7,7 @@ import {
   isCommentBreak,
   isCommentEnd,
   isCommentStart,
+  isInsideMultilineComment,
   isListItemOrTag,
   normalizeCommentPrefix,
   splitIntoChunks,
@@ -97,6 +98,33 @@ describe('isComment', () => {
     ['No buy year wolf chambray kale chips.', false],
   ])('returns prefix: %s', (input, expected) => {
     const result = isComment(input);
+    expect(result).toBe(expected);
+  });
+});
+
+describe('isInsideMultilineComment', () => {
+  test.each([
+    ['// No buy year wolf chambray kale chips.', true],
+    ['  // No buy year wolf chambray kale chips.', true],
+    ['\t// No buy year wolf chambray kale chips.', true],
+    ['  /* No buy year wolf chambray kale chips. */', false],
+    ['  /** No buy year wolf chambray kale chips. */', false],
+    ['  {/* No buy year wolf chambray kale chips. */}', false],
+    ['  # No buy year wolf chambray kale chips.', true],
+    ['  /* No buy year wolf chambray kale chips. */', false],
+    ['  /** No buy year wolf chambray kale chips. */', false],
+    ['  {/* No buy year wolf chambray kale chips. */}', false],
+    ['  # No buy year wolf chambray kale chips.', true],
+    ['  <!-- No buy year wolf chambray kale chips. -->', false],
+    ['  #', true],
+    ['  //', true],
+    ['  *', true],
+    ['  ', false],
+    ['\t', false],
+    ['', false],
+    ['No buy year wolf chambray kale chips.', false],
+  ])('returns prefix: %s', (input, expected) => {
+    const result = isInsideMultilineComment(input);
     expect(result).toBe(expected);
   });
 });
